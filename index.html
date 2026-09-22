@@ -1066,7 +1066,7 @@
 
         if (orderErr) throw orderErr;
 
-        notify(state.lang === 'bn' ? 'আপনার অর্ডারটি প্রসেসিং হচ্ছে...' : 'Submitting to supplier stock...');
+        notify(state.lang === 'bn' ? 'আপনার অর্ডারটি প্রসেসিং হচ্ছে...' : 'Your order is processing...');
 
         const { data: edgeRes, error: edgeErr } = await supabase.functions.invoke('order-reseller-process', {
           body: { order_id: orderId }
