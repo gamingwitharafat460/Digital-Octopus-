@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#070b12" />
+  <meta name="theme-color" content="#050811" />
   <title>Digital Octopus | All digital product in cheap price</title>
   <meta property="og:title" content="Digital Octopus" />
   <meta property="og:description" content="Instant Digital Subscriptions, Software Licenses & Tools" />
@@ -72,7 +72,7 @@
       animation: cardBorderGlow 4s infinite ease-in-out;
     }
 
-    .glow-primary { box-shadow: 0 4px 20px -2px rgba(99, 102, 241, 0.3); }
+    .glow-primary { box-shadow: 0 4px 24px -2px rgba(99, 102, 241, 0.4); }
     .glow-support { box-shadow: 0 4px 24px -2px rgba(16, 185, 129, 0.4); }
     .glow-active { box-shadow: 0 2px 14px -1px rgba(99, 102, 241, 0.35); }
 
@@ -85,7 +85,6 @@
       100% { opacity: 1; transform: scale(1) rotateX(0deg) translateY(0); }
     }
 
-    /* SMOOTH DROPDOWN FOR ADS BANNER */
     @keyframes bannerSlideDown {
       0% { opacity: 0; transform: translateY(-16px); max-height: 0; }
       100% { opacity: 1; transform: translateY(0); max-height: 250px; }
@@ -100,6 +99,15 @@
       will-change: transform;
     }
 
+    /* ULTRA LUXURY LOGO PULSE */
+    @keyframes logoAuraPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.4)); }
+      50% { transform: scale(1.04); filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.7)); }
+    }
+    .logo-aura-anim {
+      animation: logoAuraPulse 3s infinite ease-in-out;
+    }
+
     *, *::before, *::after {
       transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
     }
@@ -107,29 +115,72 @@
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-[#070b12] dark:text-slate-100 min-h-screen antialiased select-none pb-safe">
 
-  <!-- 1. LUXURY SPLASH SCREEN -->
-  <div id="splash-screen" class="fixed inset-0 z-[999] bg-[#070b12] flex flex-col items-center justify-center transition-opacity duration-500">
-    <div class="relative flex items-center justify-center">
-      <div id="splash-logo-container" class="w-20 h-20 rounded-3xl bg-indigo-600 flex items-center justify-center font-black text-3xl text-white shadow-2xl shadow-indigo-500/40 glow-primary overflow-hidden">
-        <span id="splash-logo-text">R</span>
-        <img id="splash-logo-img" src="" class="w-full h-full object-contain hidden" />
+  <!-- 1. ULTRA-PREMIUM ANIMATED SPLASH SCREEN (ZERO "R", ZERO "DIGITAL STORE") -->
+  <div id="splash-screen" class="fixed inset-0 z-[999] bg-[#050811] flex flex-col items-center justify-center p-6 transition-all duration-500 overflow-hidden">
+    <!-- Ambient Radial Lighting -->
+    <div class="absolute w-72 h-72 rounded-full bg-indigo-600/15 blur-[90px] pointer-events-none"></div>
+    <div class="absolute w-56 h-56 rounded-full bg-purple-600/15 blur-[80px] pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col items-center text-center">
+      <!-- Animated Centerpiece Brand Emblem -->
+      <div class="relative flex items-center justify-center mb-6">
+        <div id="splash-logo-container" class="logo-aura-anim w-24 h-24 rounded-3xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-purple-900 border border-indigo-500/40 flex items-center justify-center shadow-2xl overflow-hidden p-3.5 relative">
+          <!-- Permanent Octopus Vector Emblem (No "R" fallback) -->
+          <svg id="splash-logo-fallback" class="w-full h-full text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 002 2h4a2 2 0 002-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm6 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 16c-1.5 1-2 3-2 5m16-5c1.5 1 2 3 2 5M9 19c-.5 1-1 2-2 3m8-3c.5 1 1 2 2 3m-5-3v4"/>
+          </svg>
+          <img id="splash-logo-img" src="" class="w-full h-full object-contain hidden" />
+        </div>
+        <div class="absolute -inset-2.5 rounded-3xl border border-indigo-500/25 animate-ping opacity-25 pointer-events-none"></div>
       </div>
-      <div class="absolute -inset-2 rounded-3xl border border-indigo-500/30 animate-ping opacity-30 pointer-events-none"></div>
-    </div>
-    <h1 class="mt-5 text-sm font-extrabold tracking-[0.25em] text-white uppercase" id="splash-title">DIGITAL STORE</h1>
-    <div class="mt-8 w-28 h-1 bg-slate-800 rounded-full overflow-hidden">
-      <div class="h-full bg-indigo-500 rounded-full animate-pulse"></div>
+
+      <!-- Real Brand Identity Typography -->
+      <h1 class="text-base font-black tracking-[0.2em] text-white uppercase" id="splash-title">DIGITAL OCTOPUS</h1>
+      <p class="text-[10px] font-bold tracking-widest text-indigo-400/90 uppercase mt-1">Premium Reseller Platform</p>
+
+      <!-- REAL-TIME DYNAMIC LOADING PROGRESS BAR -->
+      <div class="mt-8 w-48 space-y-2">
+        <div class="w-full h-1.5 bg-slate-900 border border-slate-800 rounded-full overflow-hidden p-0.5 shadow-inner">
+          <div id="splash-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full transition-all duration-300 ease-out" style="width: 15%;"></div>
+        </div>
+        <div class="flex items-center justify-between text-[10px] font-mono">
+          <span id="splash-progress-status" class="text-slate-500">Initializing...</span>
+          <span id="splash-progress-pct" class="font-bold text-indigo-400">15%</span>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- CACHED LOGO / TITLE IMMEDIATE INJECTION (ELIMINATES ANY FLICKER) -->
   <script>
+    try {
+      var cached = JSON.parse(localStorage.getItem('cached_site_settings') || '{}');
+      if (cached.logo_url) {
+        var sImg = document.getElementById('splash-logo-img');
+        var sFallback = document.getElementById('splash-logo-fallback');
+        if (sImg && sFallback) {
+          sImg.src = cached.logo_url;
+          sImg.classList.remove('hidden');
+          sFallback.classList.add('hidden');
+        }
+      }
+      if (cached.site_title) {
+        var sTitle = document.getElementById('splash-title');
+        if (sTitle) sTitle.innerText = cached.site_title;
+      }
+    } catch (_) {}
+
+    // Failsafe Watchdog (Never hangs longer than 3.2 seconds under any network condition)
     setTimeout(function() {
       var s = document.getElementById('splash-screen');
       if (s) {
         s.style.opacity = '0';
-        setTimeout(function() { if (s && s.parentNode) s.parentNode.removeChild(s); }, 500);
+        s.style.transform = 'scale(1.04)';
+        setTimeout(function() { if (s && s.parentNode) s.parentNode.removeChild(s); }, 400);
       }
-    }, 1500);
+    }, 3200);
   </script>
 
   <!-- 2. TOAST STACK -->
@@ -163,16 +214,18 @@
     </div>
   </div>
 
-  <!-- 3. TOP APP BAR -->
+  <!-- 3. TOP APP BAR (OCTOPUS BRANDED, ZERO "R") -->
   <header class="sticky top-0 z-30 pt-safe bg-white/80 dark:bg-[#070b12]/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-3">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2.5">
-        <div id="header-logo-container" class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center font-extrabold text-white text-xs shadow-md shadow-indigo-600/30 overflow-hidden">
-          <span id="header-logo-text">R</span>
+        <div id="header-logo-container" class="w-8 h-8 rounded-xl bg-gradient-to-tr from-slate-900 to-indigo-900 border border-indigo-500/30 flex items-center justify-center text-white text-xs shadow-md shadow-indigo-600/20 overflow-hidden p-1.5">
+          <svg id="header-logo-fallback" class="w-full h-full text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 002 2h4a2 2 0 002-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z"/>
+          </svg>
           <img id="header-logo-img" src="" class="w-full h-full object-contain hidden" />
         </div>
         <div>
-          <span class="font-extrabold tracking-tight text-xs uppercase block text-slate-900 dark:text-white leading-none" id="header-site-title">DIGITAL STORE</span>
+          <span class="font-extrabold tracking-tight text-xs uppercase block text-slate-900 dark:text-white leading-none" id="header-site-title">DIGITAL OCTOPUS</span>
           <span class="text-[9px] font-semibold text-emerald-500 flex items-center gap-1 mt-0.5">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
             <span id="txt-live-stock">সরাসরি স্টক</span>
@@ -196,12 +249,14 @@
   <div id="pwa-install-banner" class="max-w-md mx-auto px-4 pt-3 hidden">
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/90 rounded-2xl p-3 shadow-lg flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 overflow-hidden">
-        <div id="pwa-banner-logo" class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-black text-white text-sm shadow-md overflow-hidden shrink-0">
-          <span id="pwa-banner-logo-text">R</span>
+        <div id="pwa-banner-logo" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-slate-900 to-indigo-900 border border-indigo-500/30 flex items-center justify-center font-black text-white text-sm shadow-md overflow-hidden p-2 shrink-0">
+          <svg id="pwa-banner-logo-fallback" class="w-full h-full text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 002 2h4a2 2 0 002-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z"/>
+          </svg>
           <img id="pwa-banner-logo-img" src="" class="w-full h-full object-contain hidden" />
         </div>
         <div class="overflow-hidden">
-          <h4 class="text-xs font-extrabold text-slate-900 dark:text-white leading-tight truncate" id="pwa-banner-title">Install App</h4>
+          <h4 class="text-xs font-extrabold text-slate-900 dark:text-white leading-tight truncate" id="pwa-banner-title">Install Digital Octopus</h4>
           <p class="text-[10px] text-slate-400 truncate mt-0.5">দ্রুত অ্যাক্সেস, অ্যাপের মতো অভিজ্ঞতা...</p>
         </div>
       </div>
@@ -615,7 +670,7 @@
       featuredProducts: [],
       selectedProduct: null,
       selectedQuantity: 1,
-      appliedCoupon: null, // { code, discount_amount }
+      appliedCoupon: null,
       selectedAvatarUrl: DEFAULT_AVATARS[0],
       authMode: 'login',
       theme: localStorage.getItem('reseller_theme') || 'dark',
@@ -628,7 +683,7 @@
       popupTimer: null,
       flashCountdownTimer: null,
       customerStats: { totalSpent: 0, totalDeposited: 0, totalOrders: 0 },
-      siteSettings: { logo_url: "", site_title: "DIGITAL STORE" },
+      siteSettings: { logo_url: "", site_title: "DIGITAL OCTOPUS" },
       supportConfig: { whatsapp: "8801700000000", phone: "01700000000", telegram: "" },
       popupBannerConfig: { is_active: false, default_title: "Special Offer", default_subtitle: "Exclusive discount for you", slides: [] },
       flashSaleConfig: { is_active: false, badge: "FLASH SALE", title: "", description: "", coupon_code: "", end_time: "" },
@@ -639,6 +694,15 @@
         refund_en: "1. Instant digital delivery items are non-returnable once redeemed.\n\n2. Defective items receive full wallet refund if unresolved by support."
       }
     };
+
+    function updateSplashProgress(pct, statusText) {
+      const bar = document.getElementById('splash-progress-bar');
+      const pctEl = document.getElementById('splash-progress-pct');
+      const statusEl = document.getElementById('splash-progress-status');
+      if (bar) bar.style.width = `${pct}%`;
+      if (pctEl) pctEl.innerText = `${pct}%`;
+      if (statusEl && statusText) statusEl.innerText = statusText;
+    }
 
     function formatExactTimestamp(isoString) {
       if (!isoString) return "N/A";
@@ -713,16 +777,20 @@
         const { data: siteData } = await supabase.from('settings').select('value').eq('key', 'site_settings').maybeSingle();
         if (siteData && siteData.value) {
           state.siteSettings = { ...state.siteSettings, ...siteData.value };
+          
+          // Save to LocalStorage for zero-flash instantaneous rendering on reloads
+          localStorage.setItem('cached_site_settings', JSON.stringify(state.siteSettings));
+
           if (state.siteSettings.logo_url && state.siteSettings.logo_url.trim() !== '') {
-            document.getElementById('header-logo-text')?.classList.add('hidden');
+            document.getElementById('header-logo-fallback')?.classList.add('hidden');
             const hImg = document.getElementById('header-logo-img');
             if (hImg) { hImg.src = state.siteSettings.logo_url; hImg.classList.remove('hidden'); }
 
-            document.getElementById('splash-logo-text')?.classList.add('hidden');
+            document.getElementById('splash-logo-fallback')?.classList.add('hidden');
             const sImg = document.getElementById('splash-logo-img');
             if (sImg) { sImg.src = state.siteSettings.logo_url; sImg.classList.remove('hidden'); }
 
-            document.getElementById('pwa-banner-logo-text')?.classList.add('hidden');
+            document.getElementById('pwa-banner-logo-fallback')?.classList.add('hidden');
             const bImg = document.getElementById('pwa-banner-logo-img');
             if (bImg) { bImg.src = state.siteSettings.logo_url; bImg.classList.remove('hidden'); }
           }
@@ -1297,7 +1365,7 @@
       if (!p) { navigate('store'); return; }
       state.selectedProduct = p;
       state.selectedQuantity = 1;
-      state.appliedCoupon = null; // Reset coupon on opening
+      state.appliedCoupon = null;
 
       const cur = i18n[state.lang] || i18n.bn;
       const unitPrice = parseFloat(p.selling_price) || 0;
@@ -1450,7 +1518,6 @@
       document.getElementById('btn-qty-plus')?.addEventListener('click', () => {
         if (state.selectedQuantity < 50) {
           state.selectedQuantity++;
-          // Re-calculate or reset coupon if quantity changes
           state.appliedCoupon = null;
           const msg = document.getElementById('coupon-feedback-msg');
           if (msg) msg.classList.add('hidden');
@@ -1468,7 +1535,7 @@
         }
       });
 
-      // COUPON VALIDATION HANDLER
+      // COUPON VALIDATION
       document.getElementById('btn-apply-coupon')?.addEventListener('click', async () => {
         const codeInput = document.getElementById('input-coupon-code').value.trim();
         const msg = document.getElementById('coupon-feedback-msg');
@@ -1554,7 +1621,6 @@
       try {
         const idempotencyKey = generateUUID();
 
-        // ATOMIC PURCHASE WITH COUPON CODE SUPPORT
         const { data: orderId, error: orderErr } = await supabase.rpc('place_order_atomic', {
           p_product_id: p.id,
           p_quantity: qty,
@@ -2436,8 +2502,12 @@ ${deliveryText}
     document.getElementById('nav-wallet')?.addEventListener('click', () => navigate('wallet'));
     document.getElementById('nav-profile')?.addEventListener('click', () => navigate('profile'));
 
+    // =========================================================================
+    // FAST REAL-TIME TRACKED BOOT SEQUENCE
+    // =========================================================================
     async function boot() {
       try {
+        updateSplashProgress(25, "Loading UI Theme...");
         applyTheme(state.theme);
         applyLanguage(state.lang);
         navigate('home');
@@ -2445,21 +2515,17 @@ ${deliveryText}
         console.error("UI init error:", err);
       }
 
-      setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-          splash.style.opacity = '0';
-          setTimeout(() => splash.remove(), 400);
-        }
-      }, 500);
-
+      // STAGE 2: Settings & Brand Assets
       try {
+        updateSplashProgress(50, "Syncing Brand Assets...");
         await loadGlobalSettings();
       } catch (e) {
         console.error("Settings load error:", e);
       }
 
+      // STAGE 3: Session & Encrypted Wallet Balance
       try {
+        updateSplashProgress(75, "Restoring Wallet...");
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           state.user = session.user;
@@ -2469,11 +2535,23 @@ ${deliveryText}
         console.error("Session restore error:", e);
       }
 
+      // STAGE 4: Final verification & Reveal App
       try {
+        updateSplashProgress(100, "Ready!");
         await checkPaymentReturnVerification();
       } catch (e) {
         console.error("Payment check error:", e);
       }
+
+      // Smooth Luxury Scale & Fade Out Transition
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.style.opacity = '0';
+          splash.style.transform = 'scale(1.05)';
+          setTimeout(() => splash.remove(), 450);
+        }
+      }, 400);
     }
 
     boot();
