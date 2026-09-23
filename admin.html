@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -161,7 +161,7 @@
           <img id="sidebar-logo-img" src="" class="w-full h-full object-contain hidden" />
         </div>
         <div>
-          <h1 class="text-sm font-extrabold tracking-wide text-white leading-tight truncate" id="sidebar-site-title">DIGITAL STORE</h1>
+          <h1 class="text-sm font-extrabold tracking-wide text-white leading-tight truncate" id="sidebar-site-title">DIGITAL OCTOPUS</h1>
           <p class="text-[9px] text-emerald-400 flex items-center gap-1 font-semibold">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Master Panel
           </p>
@@ -249,13 +249,13 @@
     let activeEditingProduct = null;
     let imageModalMode = 'LINK';
     let currentModalImageUrl = '';
-    let siteSettings = { logo_url: "", site_title: "DIGITAL STORE", usdt_rate: 125 };
+    let siteSettings = { logo_url: "", site_title: "DIGITAL OCTOPUS", usdt_rate: 125 };
     let supportSettings = { whatsapp: "8801700000000", phone: "01700000000", telegram: "" };
     let legalPolicies = { privacy_bn: "", privacy_en: "", refund_bn: "", refund_en: "" };
     
     // CAMPAIGN CONFIGS
     let popupBannerConfig = { is_active: false, default_title: "Special Offer", default_subtitle: "Exclusive discount for you", slides: [] };
-    let flashSaleConfig = { is_active: false, badge: "FLASH SALE", title: "Special Deal", description: "Use coupon for instant discount", coupon_code: "OCTOPUS", end_time: "" };
+    let flashSaleConfig = { is_active: false, badge: "OFFER", title: "Special Deal", description: "Use coupon for instant discount", coupon_code: "OCTOPUS", end_time: "" };
 
     // ডাবল-ক্লিক লক ফ্ল্যাগস
     let isSyncing = false;
@@ -376,7 +376,7 @@
         const { data: flashData } = await supabase.from('settings').select('value').eq('key', 'flash_sale').maybeSingle();
         if (flashData && flashData.value) flashSaleConfig = { ...flashSaleConfig, ...flashData.value };
 
-        const titleText = siteSettings.site_title || 'DIGITAL STORE';
+        const titleText = siteSettings.site_title || 'DIGITAL OCTOPUS';
         document.getElementById('sidebar-site-title').innerText = titleText;
         document.title = `${titleText} | Admin Terminal`;
 
@@ -893,6 +893,7 @@
               </button>
             </td>
 
+            <!-- ONE-CLICK FEATURED SWITCHER -->
             <td class="p-4">
               <button data-id="${p.id}" data-featured="${isFeatured}" class="btn-toggle-featured px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all flex items-center gap-1.5 ${
                 isFeatured
@@ -1507,13 +1508,12 @@
     }
 
     // =========================================================================
-    // 6. CAMPAIGNS, COUPON LIMITS & PROMOS TAB
+    // 6. CAMPAIGNS, COUPON LIMITS & PROMOS TAB (INTERACTION LINK INTEGRATED)
     // =========================================================================
     async function renderPromosTab() {
       const main = document.getElementById('admin-main');
       main.innerHTML = `<div class="text-xs text-slate-400 animate-pulse">Loading campaigns and coupons...</div>`;
 
-      // কুপন তালিকা লোড
       const { data: coupons } = await supabase.from('coupons').select('*').order('created_at', { ascending: false });
       cachedCoupons = coupons || [];
 
@@ -1650,7 +1650,7 @@
             </div>
           </div>
 
-          <!-- SECTION 3: ENTRY POPUP ADS POSTER MANAGER (600x400 OPTIMIZED) -->
+          <!-- SECTION 3: ENTRY POPUP ADS POSTER MANAGER (600x400 OPTIMIZED WITH BUTTON LINK) -->
           <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-5 shadow-sm">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
               <div class="flex items-center gap-2.5">
@@ -1659,7 +1659,7 @@
                 </div>
                 <div>
                   <h3 class="text-sm font-bold text-white">Entry Pop-up Ads Carousel (600×400)</h3>
-                  <p class="text-[11px] text-slate-400">অ্যাপ ওপেন করলে স্বয়ংক্রিয়ভাবে স্লাইড আকারে 600×400 পোস্টার ভেসে উঠবে</p>
+                  <p class="text-[11px] text-slate-400">অ্যাপ ওপেন করলে স্লাইড আকারে পোস্টার ও বাটন লিংক ভেসে উঠবে</p>
                 </div>
               </div>
 
@@ -1674,7 +1674,7 @@
               <div id="popup-slides-list" class="space-y-2.5"></div>
             </div>
 
-            <!-- ADD POSTER FORM -->
+            <!-- ADD POSTER FORM (BUTTON LINK RESTORED) -->
             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
               <span class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -1698,6 +1698,18 @@
                 <div>
                   <label class="text-[10px] text-slate-400 font-bold uppercase">সাবটাইটেল / বার্তা</label>
                   <input type="text" id="new-slide-subtitle" placeholder="e.g. Grab before it expires" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500 mt-1" />
+                </div>
+              </div>
+
+              <!-- INTERACTION BUTTON & TARGET LINK RESTORED -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[10px] text-slate-400 font-bold uppercase">বাটন টেক্সট (Button Text)</label>
+                  <input type="text" id="new-slide-btn-text" placeholder="e.g. Claim Now / View Offer" value="Explore Now" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-purple-500 mt-1 font-bold" />
+                </div>
+                <div>
+                  <label class="text-[10px] text-purple-400 font-bold uppercase tracking-wider">বাটন লিংক (Target Link URL) *</label>
+                  <input type="text" id="new-slide-link" placeholder="e.g. https://wa.me/... or store" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-purple-500 mt-1" />
                 </div>
               </div>
 
@@ -1883,7 +1895,7 @@
             </div>
             <div class="overflow-hidden">
               <div class="font-bold text-white truncate">${s.title || `Poster ${idx+1}`}</div>
-              <div class="text-[10px] text-slate-400 truncate">${s.subtitle || 'Special Announcement'}</div>
+              <div class="text-[10px] text-slate-400 truncate">${s.button_text || 'Explore'} • <span class="font-mono text-purple-400">${s.link_url || 'No link'}</span></div>
             </div>
           </div>
 
@@ -1907,6 +1919,8 @@
       const fileInput = document.getElementById('new-slide-img-file');
       const title = document.getElementById('new-slide-title').value.trim();
       const subtitle = document.getElementById('new-slide-subtitle').value.trim();
+      const btnText = document.getElementById('new-slide-btn-text').value.trim() || 'Explore Now';
+      const link = document.getElementById('new-slide-link').value.trim();
 
       if (!imgUrl && fileInput.files.length === 0) {
         return notify("ছবি নির্বাচন করুন", "ইমেজ URL অথবা 600×400 ফাইল আপলোড করুন", "error");
@@ -1932,13 +1946,17 @@
         popupBannerConfig.slides.push({
           image_url: imgUrl,
           title: title || 'Special Promotion',
-          subtitle: subtitle || 'Exclusive offer for our customers'
+          subtitle: subtitle || 'Exclusive offer for our customers',
+          button_text: btnText,
+          link_url: link
         });
 
         document.getElementById('new-slide-img-url').value = '';
         document.getElementById('new-slide-img-file').value = '';
         document.getElementById('new-slide-title').value = '';
         document.getElementById('new-slide-subtitle').value = '';
+        document.getElementById('new-slide-btn-text').value = 'Explore Now';
+        document.getElementById('new-slide-link').value = '';
 
         notify("পোস্টার যুক্ত হয়েছে!", "নিচে 'পপ-আপ ব্যানার সংরক্ষণ করুন' বাটনে চাপ দিন", "success");
         renderPopupSlidesList();
@@ -2199,7 +2217,7 @@
             </h3>
             <div>
               <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">ওয়েবসাইট টাইটেল (Site Title / Name) *</label>
-              <input type="text" id="set-site-title" value="${siteSettings.site_title || 'DIGITAL STORE'}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-bold outline-none focus:border-indigo-500 mt-1" />
+              <input type="text" id="set-site-title" value="${siteSettings.site_title || 'DIGITAL OCTOPUS'}" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-bold outline-none focus:border-indigo-500 mt-1" />
             </div>
             <div>
               <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">মেইন লোগো ইমেজ লিংক (Main Logo Image URL)</label>
@@ -2274,7 +2292,7 @@
         if (isSavingSettings) return;
 
         const logo = document.getElementById('set-logo-url').value.trim();
-        const title = document.getElementById('set-site-title').value.trim() || 'DIGITAL STORE';
+        const title = document.getElementById('set-site-title').value.trim() || 'DIGITAL OCTOPUS';
         const wa = document.getElementById('set-whatsapp').value.trim();
         const ph = document.getElementById('set-phone').value.trim();
         const tg = document.getElementById('set-telegram').value.trim();
