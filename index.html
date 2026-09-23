@@ -99,7 +99,6 @@
       will-change: transform;
     }
 
-    /* ULTRA LUXURY LOGO PULSE */
     @keyframes logoAuraPulse {
       0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.4)); }
       50% { transform: scale(1.04); filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.7)); }
@@ -115,17 +114,14 @@
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-[#070b12] dark:text-slate-100 min-h-screen antialiased select-none pb-safe">
 
-  <!-- 1. ULTRA-PREMIUM ANIMATED SPLASH SCREEN (ZERO "R", ZERO "DIGITAL STORE") -->
+  <!-- 1. ULTRA-PREMIUM ANIMATED SPLASH SCREEN -->
   <div id="splash-screen" class="fixed inset-0 z-[999] bg-[#050811] flex flex-col items-center justify-center p-6 transition-all duration-500 overflow-hidden">
-    <!-- Ambient Radial Lighting -->
     <div class="absolute w-72 h-72 rounded-full bg-indigo-600/15 blur-[90px] pointer-events-none"></div>
     <div class="absolute w-56 h-56 rounded-full bg-purple-600/15 blur-[80px] pointer-events-none"></div>
 
     <div class="relative z-10 flex flex-col items-center text-center">
-      <!-- Animated Centerpiece Brand Emblem -->
       <div class="relative flex items-center justify-center mb-6">
         <div id="splash-logo-container" class="logo-aura-anim w-24 h-24 rounded-3xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-purple-900 border border-indigo-500/40 flex items-center justify-center shadow-2xl overflow-hidden p-3.5 relative">
-          <!-- Permanent Octopus Vector Emblem (No "R" fallback) -->
           <svg id="splash-logo-fallback" class="w-full h-full text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V17a2 2 0 002 2h4a2 2 0 002-2v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z"/>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm6 0a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
@@ -136,11 +132,9 @@
         <div class="absolute -inset-2.5 rounded-3xl border border-indigo-500/25 animate-ping opacity-25 pointer-events-none"></div>
       </div>
 
-      <!-- Real Brand Identity Typography -->
       <h1 class="text-base font-black tracking-[0.2em] text-white uppercase" id="splash-title">DIGITAL OCTOPUS</h1>
       <p class="text-[10px] font-bold tracking-widest text-indigo-400/90 uppercase mt-1">Premium Reseller Platform</p>
 
-      <!-- REAL-TIME DYNAMIC LOADING PROGRESS BAR -->
       <div class="mt-8 w-48 space-y-2">
         <div class="w-full h-1.5 bg-slate-900 border border-slate-800 rounded-full overflow-hidden p-0.5 shadow-inner">
           <div id="splash-progress-bar" class="h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-400 rounded-full transition-all duration-300 ease-out" style="width: 15%;"></div>
@@ -153,7 +147,6 @@
     </div>
   </div>
 
-  <!-- CACHED LOGO / TITLE IMMEDIATE INJECTION (ELIMINATES ANY FLICKER) -->
   <script>
     try {
       var cached = JSON.parse(localStorage.getItem('cached_site_settings') || '{}');
@@ -172,7 +165,6 @@
       }
     } catch (_) {}
 
-    // Failsafe Watchdog (Never hangs longer than 3.2 seconds under any network condition)
     setTimeout(function() {
       var s = document.getElementById('splash-screen');
       if (s) {
@@ -186,21 +178,18 @@
   <!-- 2. TOAST STACK -->
   <div id="toast-root" class="fixed top-5 left-1/2 -translate-x-1/2 z-[1100] flex flex-col gap-2 max-w-xs w-full pointer-events-none px-4"></div>
 
-  <!-- ENTRY ADS BANNER POPUP MODAL (COMPACT 600x400 OPTIMIZED, TOP CENTER CLOSE) -->
+  <!-- ENTRY ADS BANNER POPUP MODAL -->
   <div id="entry-popup-modal" class="fixed inset-0 z-[1000] bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4 hidden">
-    <!-- Top Center Sleek Close Cross Button -->
     <button id="btn-close-entry-popup" class="mb-3 w-10 h-10 rounded-full bg-slate-800/95 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700 shadow-2xl transition-all active:scale-90" title="Close">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
 
-    <!-- Modal Content Card with 600x400 (3:2) Aspect Ratio -->
     <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden max-w-[340px] sm:max-w-[380px] w-full shadow-2xl relative flex flex-col">
       <div id="popup-slider-container" class="relative overflow-hidden w-full aspect-[3/2] bg-slate-950">
         <div id="popup-track" class="carousel-track h-full w-full"></div>
         <div id="popup-dots" class="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1.5 z-10 pointer-events-none"></div>
       </div>
 
-      <!-- Footer Info & Luxury Close/Action Button -->
       <div class="p-3.5 bg-slate-900/95 border-t border-slate-800 space-y-2">
         <div id="popup-text-container" class="text-center space-y-0.5">
           <h4 id="popup-banner-title" class="text-xs font-black text-white truncate">Special Announcement</h4>
@@ -214,7 +203,7 @@
     </div>
   </div>
 
-  <!-- 3. TOP APP BAR (OCTOPUS BRANDED, ZERO "R") -->
+  <!-- 3. TOP APP BAR -->
   <header class="sticky top-0 z-30 pt-safe bg-white/80 dark:bg-[#070b12]/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-3">
     <div class="max-w-md mx-auto flex items-center justify-between">
       <div class="flex items-center gap-2.5">
@@ -777,8 +766,6 @@
         const { data: siteData } = await supabase.from('settings').select('value').eq('key', 'site_settings').maybeSingle();
         if (siteData && siteData.value) {
           state.siteSettings = { ...state.siteSettings, ...siteData.value };
-          
-          // Save to LocalStorage for zero-flash instantaneous rendering on reloads
           localStorage.setItem('cached_site_settings', JSON.stringify(state.siteSettings));
 
           if (state.siteSettings.logo_url && state.siteSettings.logo_url.trim() !== '') {
@@ -841,9 +828,6 @@
       initEntryPopupBanner();
     }
 
-    // =========================================================================
-    // ENTRY POPUP BANNER CONTROLLER (600x400 OPTIMIZED, NO LINK LEAKS)
-    // =========================================================================
     function initEntryPopupBanner() {
       const cfg = state.popupBannerConfig;
       if (!cfg || !cfg.is_active || !cfg.slides || cfg.slides.length === 0) return;
@@ -950,6 +934,9 @@
       state.customerStats = { totalSpent: spent, totalDeposited: dep, totalOrders: ordCount };
     }
 
+    // =========================================================================
+    // NAVIGATION ROUTER (GUARANTEES TOP SCROLL ON VIEW CHANGE)
+    // =========================================================================
     function navigate(tab, param = null) {
       if (state.carouselTimer) {
         clearInterval(state.carouselTimer);
@@ -977,6 +964,7 @@
 
       const container = document.getElementById('app-view');
       if (!container) return;
+      
       if (tab === 'home') renderHome(container);
       if (tab === 'store') renderStore(container);
       if (tab === 'orders') renderOrders(container);
@@ -985,6 +973,11 @@
       if (tab === 'product-details') renderProductDetails(container, param);
       if (tab === 'order-success') renderOrderSuccess(container, param);
       if (tab === 'policies') renderPolicies(container);
+
+      // নিশ্চিতভাবে স্ক্রিন ও কন্টেইনারকে শীর্ষে স্ক্রোল করা
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
     }
 
     // =========================================================================
@@ -993,7 +986,7 @@
     async function renderHome(el) {
       const cur = i18n[state.lang] || i18n.bn;
       el.innerHTML = `
-        <!-- ATTACHED TOP ADS BANNER (SMOOTH DROPDOWN ANIMATION, NO REDIRECT BUTTON) -->
+        <!-- ATTACHED TOP ADS BANNER -->
         <div id="flash-sale-wrapper" class="hidden -mt-2 mb-2 banner-dropdown">
           <div class="relative overflow-hidden bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border border-indigo-500/30 rounded-2xl p-3 shadow-md">
             <div class="flex items-center justify-between gap-2">
@@ -1014,7 +1007,7 @@
             <div class="mt-1.5 flex items-center justify-between gap-2">
               <p id="flash-desc-text" class="text-[10px] text-slate-300 font-medium truncate">Limited discount voucher available</p>
               
-              <!-- 1-CLICK COPY COUPON CODE BADGE (NO OUTWARD LINK) -->
+              <!-- 1-CLICK COPY COUPON CODE BADGE -->
               <div id="flash-coupon-wrapper" class="inline-flex items-center gap-1.5 bg-slate-950/80 px-2 py-0.5 rounded-md border border-dashed border-amber-400/60 cursor-pointer active:scale-95 transition-all shrink-0">
                 <span class="text-[8px] text-slate-400 uppercase font-bold">CODE:</span>
                 <span id="flash-coupon-code" class="text-[10px] font-mono font-black text-amber-400 tracking-wider">OCTOPUS</span>
@@ -1359,7 +1352,7 @@
     }
 
     // =========================================================================
-    // 4. PRODUCT DETAILS VIEW (WITH QUANTITY & REAL-TIME COUPON SYSTEM)
+    // 4. PRODUCT DETAILS VIEW (OPENED DIRECTLY AT TOP)
     // =========================================================================
     function renderProductDetails(el, p) {
       if (!p) { navigate('store'); return; }
@@ -1535,7 +1528,6 @@
         }
       });
 
-      // COUPON VALIDATION
       document.getElementById('btn-apply-coupon')?.addEventListener('click', async () => {
         const codeInput = document.getElementById('input-coupon-code').value.trim();
         const msg = document.getElementById('coupon-feedback-msg');
@@ -1661,7 +1653,9 @@
       }
     }
 
-    // 5. ORDER CONFIRMED & DELIVERY RECEIPT
+    // =========================================================================
+    // 5. ORDER CONFIRMED & DELIVERY RECEIPT (OPENED DIRECTLY AT TOP)
+    // =========================================================================
     function renderOrderSuccess(el, order) {
       if (!order) {
         navigate('orders');
@@ -1923,9 +1917,7 @@ ${deliveryText}
       });
     }
 
-    // =========================================================================
-    // 7. WALLET SCREEN (MINUS DEDUCTION IN RED)
-    // =========================================================================
+    // 7. WALLET SCREEN
     async function renderWallet(el) {
       const cur = i18n[state.lang] || i18n.bn;
       el.innerHTML = `
@@ -1989,7 +1981,6 @@ ${deliveryText}
                   ` : ''}
                 </div>
                 
-                <!-- MINUS AMOUNT IN RED COLOR -->
                 <div class="text-right shrink-0">
                   <div class="font-mono font-bold ${isPositive ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}">
                     ${isPositive ? '+' : ''}৳${numAmt.toFixed(2)}
@@ -2394,7 +2385,6 @@ ${deliveryText}
       }
     });
 
-    // SUPPORT TOGGLER
     const supportFolder = document.getElementById('support-folder');
     document.getElementById('btn-support-trigger')?.addEventListener('click', () => {
       supportFolder?.classList.toggle('hidden');
@@ -2403,7 +2393,6 @@ ${deliveryText}
       supportFolder?.classList.add('hidden');
     });
 
-    // AUTH MODAL
     function openAuthModal() {
       document.getElementById('auth-modal')?.classList.remove('hidden');
     }
@@ -2515,7 +2504,6 @@ ${deliveryText}
         console.error("UI init error:", err);
       }
 
-      // STAGE 2: Settings & Brand Assets
       try {
         updateSplashProgress(50, "Syncing Brand Assets...");
         await loadGlobalSettings();
@@ -2523,7 +2511,6 @@ ${deliveryText}
         console.error("Settings load error:", e);
       }
 
-      // STAGE 3: Session & Encrypted Wallet Balance
       try {
         updateSplashProgress(75, "Restoring Wallet...");
         const { data: { session } } = await supabase.auth.getSession();
@@ -2535,7 +2522,6 @@ ${deliveryText}
         console.error("Session restore error:", e);
       }
 
-      // STAGE 4: Final verification & Reveal App
       try {
         updateSplashProgress(100, "Ready!");
         await checkPaymentReturnVerification();
@@ -2543,7 +2529,6 @@ ${deliveryText}
         console.error("Payment check error:", e);
       }
 
-      // Smooth Luxury Scale & Fade Out Transition
       setTimeout(() => {
         const splash = document.getElementById('splash-screen');
         if (splash) {
