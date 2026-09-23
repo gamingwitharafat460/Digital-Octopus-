@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="bn" class="dark">
 <head>
   <meta charset="UTF-8" />
@@ -85,6 +85,15 @@
       100% { opacity: 1; transform: scale(1) rotateX(0deg) translateY(0); }
     }
 
+    /* SMOOTH DROPDOWN FOR ADS BANNER */
+    @keyframes bannerSlideDown {
+      0% { opacity: 0; transform: translateY(-16px); max-height: 0; }
+      100% { opacity: 1; transform: translateY(0); max-height: 250px; }
+    }
+    .banner-dropdown {
+      animation: bannerSlideDown 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
     .carousel-track {
       display: flex;
       transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1);
@@ -113,8 +122,46 @@
     </div>
   </div>
 
+  <script>
+    setTimeout(function() {
+      var s = document.getElementById('splash-screen');
+      if (s) {
+        s.style.opacity = '0';
+        setTimeout(function() { if (s && s.parentNode) s.parentNode.removeChild(s); }, 500);
+      }
+    }, 1500);
+  </script>
+
   <!-- 2. TOAST STACK -->
-  <div id="toast-root" class="fixed top-5 left-1/2 -translate-x-1/2 z-[900] flex flex-col gap-2 max-w-xs w-full pointer-events-none px-4"></div>
+  <div id="toast-root" class="fixed top-5 left-1/2 -translate-x-1/2 z-[1100] flex flex-col gap-2 max-w-xs w-full pointer-events-none px-4"></div>
+
+  <!-- ENTRY ADS BANNER POPUP MODAL (COMPACT 600x400 OPTIMIZED, TOP CENTER CLOSE) -->
+  <div id="entry-popup-modal" class="fixed inset-0 z-[1000] bg-black/80 backdrop-blur-md flex flex-col items-center justify-center p-4 hidden">
+    <!-- Top Center Sleek Close Cross Button -->
+    <button id="btn-close-entry-popup" class="mb-3 w-10 h-10 rounded-full bg-slate-800/95 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center border border-slate-700 shadow-2xl transition-all active:scale-90" title="Close">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+
+    <!-- Modal Content Card with 600x400 (3:2) Aspect Ratio -->
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden max-w-[340px] sm:max-w-[380px] w-full shadow-2xl relative flex flex-col">
+      <div id="popup-slider-container" class="relative overflow-hidden w-full aspect-[3/2] bg-slate-950">
+        <div id="popup-track" class="carousel-track h-full w-full"></div>
+        <div id="popup-dots" class="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1.5 z-10 pointer-events-none"></div>
+      </div>
+
+      <!-- Footer Info & Luxury Close/Action Button -->
+      <div class="p-3.5 bg-slate-900/95 border-t border-slate-800 space-y-2">
+        <div id="popup-text-container" class="text-center space-y-0.5">
+          <h4 id="popup-banner-title" class="text-xs font-black text-white truncate">Special Announcement</h4>
+          <p id="popup-banner-subtitle" class="text-[10px] text-slate-400 truncate">Tap below to dismiss or explore</p>
+        </div>
+        <button id="btn-popup-dismiss" class="btn-shine w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-1.5 active:scale-95 transition-all">
+          <span>Explore Now</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- 3. TOP APP BAR -->
   <header class="sticky top-0 z-30 pt-safe bg-white/80 dark:bg-[#070b12]/85 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 px-4 py-3">
@@ -145,7 +192,7 @@
     </div>
   </header>
 
-  <!-- PWA INSTALL FLOATING BANNER (NO CROSS BUTTON, PERSISTENT FOR UNINSTALLED USERS) -->
+  <!-- PWA INSTALL FLOATING BANNER -->
   <div id="pwa-install-banner" class="max-w-md mx-auto px-4 pt-3 hidden">
     <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/90 rounded-2xl p-3 shadow-lg flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 overflow-hidden">
@@ -165,7 +212,7 @@
   </div>
 
   <!-- 4. MAIN CONTAINER -->
-  <main id="app-view" class="p-4 max-w-md mx-auto space-y-4"></main>
+  <main id="app-view" class="p-4 max-w-md mx-auto space-y-4 pt-2"></main>
 
   <!-- 5. FLOATING HELP & SUPPORT BUTTON -->
   <div class="fixed bottom-20 right-4 z-40 flex flex-col items-end pointer-events-auto">
@@ -235,7 +282,7 @@
     </button>
   </div>
 
-  <!-- 6. HIGHLY VISIBLE ACTIVE BOTTOM NAVIGATION BAR -->
+  <!-- 6. ACTIVE BOTTOM NAVIGATION BAR -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#070b12]/95 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 max-w-md mx-auto flex justify-around py-2 px-3">
     <button id="nav-home" class="flex flex-col items-center justify-center gap-0.5 py-1 px-3 rounded-2xl transition-all duration-200">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
@@ -330,7 +377,6 @@
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzYm9leWFkZWl5ZHBwa3RxdG95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5MjY2MzUsImV4cCI6MjEwNTUwMjYzNX0.gosw_nBzgKToFN3ViWutlJHpJk5EZ2hQLF6oTfEDpxM";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // PWA INSTALL DEFERRED EVENT HANDLER
     let deferredInstallPrompt = null;
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
@@ -361,7 +407,6 @@
       deferredInstallPrompt = null;
     });
 
-    // ১. ইউনিভার্সাল সেফ UUID জেনারেটর
     function generateUUID() {
       if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
         try { return crypto.randomUUID(); } catch (_) {}
@@ -373,7 +418,6 @@
       });
     }
 
-    // ২. ইউনিভার্সাল ক্লিপবোর্ড কপিয়ার
     async function copyToClipboard(text) {
       if (navigator.clipboard && window.isSecureContext) {
         try {
@@ -477,7 +521,13 @@
         tab_privacy: "গোপনীয়তা নীতি (Privacy)",
         tab_refund: "রিফান্ড নীতি (Refund)",
         featured_badge: "বিশেষ আকর্ষণ",
-        featured_title: "ফিচার্ড প্রোডাক্টস"
+        featured_title: "ফিচার্ড প্রোডাক্টস",
+        quantity_label: "পরিমাণ (Quantity)",
+        unit_price_label: "একক মূল্য",
+        total_payable_label: "সর্বমোট প্রদেয়",
+        coupon_label: "কুপন কোড (যদি থাকে)",
+        apply_coupon: "প্রয়োগ করুন",
+        coupon_discount: "কুপন ডিসকাউন্ট"
       },
       en: {
         nav_home: "Home",
@@ -544,7 +594,13 @@
         tab_privacy: "Privacy Policy",
         tab_refund: "Refund Policy",
         featured_badge: "Featured Choice",
-        featured_title: "Featured Products"
+        featured_title: "Featured Products",
+        quantity_label: "Quantity",
+        unit_price_label: "Unit Price",
+        total_payable_label: "Total Pay",
+        coupon_label: "Coupon Code (Optional)",
+        apply_coupon: "Apply",
+        coupon_discount: "Coupon Discount"
       }
     };
 
@@ -558,22 +614,29 @@
       products: [],
       featuredProducts: [],
       selectedProduct: null,
+      selectedQuantity: 1,
+      appliedCoupon: null, // { code, discount_amount }
       selectedAvatarUrl: DEFAULT_AVATARS[0],
       authMode: 'login',
       theme: localStorage.getItem('reseller_theme') || 'dark',
-      lang: localStorage.getItem('reseller_lang') || 'bn',
+      lang: (localStorage.getItem('reseller_lang') === 'en' ? 'en' : 'bn'),
       isPurchasing: false,
       isDepositing: false,
       isSavingProfile: false,
+      isValidatingCoupon: false,
       carouselTimer: null,
+      popupTimer: null,
+      flashCountdownTimer: null,
       customerStats: { totalSpent: 0, totalDeposited: 0, totalOrders: 0 },
       siteSettings: { logo_url: "", site_title: "DIGITAL STORE" },
       supportConfig: { whatsapp: "8801700000000", phone: "01700000000", telegram: "" },
+      popupBannerConfig: { is_active: false, default_title: "Special Offer", default_subtitle: "Exclusive discount for you", slides: [] },
+      flashSaleConfig: { is_active: false, badge: "FLASH SALE", title: "", description: "", coupon_code: "", end_time: "" },
       legalPolicies: {
-        privacy_bn: "১. তথ্য সংগ্রহ: আমরা আপনার নাম, ইমেইল ও মোবাইল নম্বর শুধুমাত্র অ্যাকাউন্ট নিরাপত্তা ও ডিজিটাল ডেলিভারি নিশ্চিত করার জন্য সংরক্ষণ করি।\n\n২. তথ্যের নিরাপত্তা: গ্রাহকের সকল ব্যক্তিগত তথ্য ও ট্রানজেকশন ডেটাবেজে সম্পূর্ণ এনক্রিপ্টেড অবস্থায় সংরক্ষিত থাকে। আমরা কোনো তৃতীয় পক্ষের কাছে গ্রাহকের তথ্য বিক্রি বা হস্তান্তর করি না।\n\n৩. ব্যবহারের উদ্দেশ্য: ওয়ালেট ব্যালেন্স ট্র্যাকিং, ইনস্ট্যান্ট ডেলিভারি ভেরিফিকেশন এবং জরুরি কাস্টমার সার্ভিসের উদ্দেশ্যেই কেবল এই তথ্য ব্যবহৃত হয়।",
-        privacy_en: "1. Information Collection: We collect your name, email, and phone number solely for account security and seamless automated digital delivery.\n\n2. Data Protection: All personal details and transaction records are stored with end-to-end encryption. We never sell, lease, or share customer data with any third-party entities.\n\n3. Usage Scope: Your data is exclusively used for in-app wallet management, real-time license verification, and dedicated customer support.",
-        refund_bn: "১. ডিজিটাল প্রোডাক্টের নিয়ম: সমস্ত ডিজিটাল সাবস্ক্রিপশন, কি এবং কোড ইনস্ট্যান্ট অটোমেটেড ডেলিভারির মাধ্যমে প্রদান করা হয়। প্রোডাক্ট সফলভাবে আনলক হওয়ার পর তা ফেরতযোগ্য নয়।\n\n২. রিফান্ড পাওয়ার যোগ্যতা: যদি ডেলিভারিকৃত কোড বা সার্ভিসে কোনো ইনভ্যালিড সমস্যা থাকে এবং আমাদের সাপোর্ট টিম ওয়ারেন্টির মধ্যে তার সমাধান দিতে ব্যর্থ হয়, তবে তাৎক্ষণিক ১০০% রিফান্ড গ্রাহকের ওয়ালেটে ফিরিয়ে দেওয়া হবে।\n\n৩. অযোগ্যতা: ভুল ইমেইল বা ভুল টার্গেট আইডি প্রদান করলে কিংবা ক্রয়ের পর নিজের সিদ্ধান্ত পরিবর্তন করলে কোনো রিফান্ড প্রযোজ্য হবে না।",
-        refund_en: "1. Digital Goods Nature: All subscriptions, tools, and license codes are delivered instantly via our automated inventory. Delivered and valid items are non-returnable.\n\n2. Refund Eligibility: If an item is defective or inaccessible and our support team cannot resolve the issue within the warranty window, a 100% refund is automatically credited back to your in-app wallet balance.\n\n3. Ineligible Circumstances: No refunds are issued for buyer remorse or incorrect email/user tags provided during checkout."
+        privacy_bn: "১. তথ্য সংগ্রহ: আমরা আপনার নাম, ইমেইল ও মোবাইল নম্বর শুধুমাত্র অ্যাকাউন্ট নিরাপত্তা ও ডিজিটাল ডেলিভারি নিশ্চিত করার জন্য সংরক্ষণ করি।\n\n২. তথ্যের নিরাপত্তা: গ্রাহকের সকল ব্যক্তিগত তথ্য ও ট্রানজেকশন ডেটাবেজে সম্পূর্ণ এনক্রিপ্টেড অবস্থায় সংরক্ষিত থাকে।\n\n৩. ব্যবহারের উদ্দেশ্য: ওয়ালেট ব্যালেন্স ট্র্যাকিং ও ইনস্ট্যান্ট ডেলিভারি ভেরিফিকেশন।",
+        privacy_en: "1. Information Collection: We collect name, email, and phone solely for account security and delivery verification.\n\n2. Data Protection: Encrypted database storage. No data is shared with third parties.",
+        refund_bn: "১. ডিজিটাল প্রোডাক্ট সফলভাবে আনলক হওয়ার পর তা ফেরতযোগ্য নয়।\n\n২. ওয়ারেন্টির মধ্যে কোনো সমস্যা থাকলে তাৎক্ষণিক ১০০% রিফান্ড গ্রাহকের ওয়ালেটে ফিরিয়ে দেওয়া হয়।",
+        refund_en: "1. Instant digital delivery items are non-returnable once redeemed.\n\n2. Defective items receive full wallet refund if unresolved by support."
       }
     };
 
@@ -609,18 +672,22 @@
     }
 
     function applyLanguage(lang) {
-      state.lang = lang;
-      localStorage.setItem('reseller_lang', lang);
+      const activeLang = (lang === 'en' || lang === 'bn') ? lang : 'bn';
+      state.lang = activeLang;
+      localStorage.setItem('reseller_lang', activeLang);
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (i18n[lang][key]) el.innerText = i18n[lang][key];
+        if (i18n[activeLang] && i18n[activeLang][key]) el.innerText = i18n[activeLang][key];
       });
-      document.getElementById('txt-live-stock').innerText = lang === 'bn' ? 'সরাসরি স্টক' : 'Live Stock';
-      document.getElementById('lbl-balance-nav').innerText = lang === 'bn' ? 'ব্যালেন্স' : 'Wallet';
+      const txtLive = document.getElementById('txt-live-stock');
+      if (txtLive) txtLive.innerText = activeLang === 'bn' ? 'সরাসরি স্টক' : 'Live Stock';
+      const lblBal = document.getElementById('lbl-balance-nav');
+      if (lblBal) lblBal.innerText = activeLang === 'bn' ? 'ব্যালেন্স' : 'Wallet';
     }
 
     function notify(message, isError = false) {
       const root = document.getElementById('toast-root');
+      if (!root) return;
       const t = document.createElement('div');
       t.className = `p-3.5 rounded-2xl border text-xs font-bold shadow-2xl backdrop-blur-xl flex items-center gap-2.5 transition-all duration-300 transform translate-y-2 opacity-0 ${
         isError 
@@ -647,10 +714,9 @@
         if (siteData && siteData.value) {
           state.siteSettings = { ...state.siteSettings, ...siteData.value };
           if (state.siteSettings.logo_url && state.siteSettings.logo_url.trim() !== '') {
-            document.getElementById('header-logo-text').classList.add('hidden');
+            document.getElementById('header-logo-text')?.classList.add('hidden');
             const hImg = document.getElementById('header-logo-img');
-            hImg.src = state.siteSettings.logo_url;
-            hImg.classList.remove('hidden');
+            if (hImg) { hImg.src = state.siteSettings.logo_url; hImg.classList.remove('hidden'); }
 
             document.getElementById('splash-logo-text')?.classList.add('hidden');
             const sImg = document.getElementById('splash-logo-img');
@@ -661,7 +727,8 @@
             if (bImg) { bImg.src = state.siteSettings.logo_url; bImg.classList.remove('hidden'); }
           }
           if (state.siteSettings.site_title) {
-            document.getElementById('header-site-title').innerText = state.siteSettings.site_title;
+            const hTitle = document.getElementById('header-site-title');
+            if (hTitle) hTitle.innerText = state.siteSettings.site_title;
             const sTitle = document.getElementById('splash-title');
             if (sTitle) sTitle.innerText = state.siteSettings.site_title;
             document.title = `${state.siteSettings.site_title} | Store`;
@@ -679,27 +746,116 @@
         if (polData && polData.value) {
           state.legalPolicies = { ...state.legalPolicies, ...polData.value };
         }
+
+        const { data: popupData } = await supabase.from('settings').select('value').eq('key', 'popup_banners').maybeSingle();
+        if (popupData && popupData.value) {
+          state.popupBannerConfig = { ...state.popupBannerConfig, ...popupData.value };
+        }
+
+        const { data: flashData } = await supabase.from('settings').select('value').eq('key', 'flash_sale').maybeSingle();
+        if (flashData && flashData.value) {
+          state.flashSaleConfig = { ...state.flashSaleConfig, ...flashData.value };
+        }
+
       } catch (e) {
         console.log("Using default config");
       }
 
       const cleanWa = (state.supportConfig.whatsapp || '').replace(/[^0-9]/g, '');
-      document.getElementById('link-whatsapp').href = `https://wa.me/${cleanWa}?text=Hello,%20I%20need%20support%20for%20an%20order`;
-      document.getElementById('link-phone').href = `tel:${state.supportConfig.phone}`;
+      const linkWa = document.getElementById('link-whatsapp');
+      if (linkWa) linkWa.href = `https://wa.me/${cleanWa}?text=Hello,%20I%20need%20support%20for%20an%20order`;
+      const linkPh = document.getElementById('link-phone');
+      if (linkPh) linkPh.href = `tel:${state.supportConfig.phone}`;
       const tg = state.supportConfig.telegram || '';
-      document.getElementById('link-telegram').href = tg.startsWith('http') ? tg : `https://t.me/${tg.replace('@','')}`;
+      const linkTg = document.getElementById('link-telegram');
+      if (linkTg) linkTg.href = tg.startsWith('http') ? tg : `https://t.me/${tg.replace('@','')}`;
+
+      initEntryPopupBanner();
+    }
+
+    // =========================================================================
+    // ENTRY POPUP BANNER CONTROLLER (600x400 OPTIMIZED, NO LINK LEAKS)
+    // =========================================================================
+    function initEntryPopupBanner() {
+      const cfg = state.popupBannerConfig;
+      if (!cfg || !cfg.is_active || !cfg.slides || cfg.slides.length === 0) return;
+
+      const modal = document.getElementById('entry-popup-modal');
+      const track = document.getElementById('popup-track');
+      const dotsContainer = document.getElementById('popup-dots');
+      const titleEl = document.getElementById('popup-banner-title');
+      const subtitleEl = document.getElementById('popup-banner-subtitle');
+      const dismissBtn = document.getElementById('btn-popup-dismiss');
+
+      if (!modal || !track) return;
+
+      const slides = cfg.slides;
+      let currentIndex = 0;
+
+      track.innerHTML = slides.map((s, idx) => `
+        <div class="min-w-full h-full shrink-0 relative overflow-hidden bg-slate-950 flex items-center justify-center">
+          <img src="${s.image_url}" alt="Promotion ${idx + 1}" class="w-full h-full object-cover object-center pointer-events-none" />
+        </div>
+      `).join('');
+
+      if (dotsContainer && slides.length > 1) {
+        dotsContainer.innerHTML = slides.map((_, i) => `
+          <span class="popup-dot h-1.5 rounded-full transition-all duration-300 ${i === 0 ? 'bg-indigo-500 w-4' : 'bg-slate-600/80 w-1.5'}"></span>
+        `).join('');
+      } else if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+      }
+
+      function updateSlideUI() {
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+        const activeSlide = slides[currentIndex] || slides[0];
+
+        if (titleEl) titleEl.innerText = activeSlide.title || cfg.default_title || 'Special Promotion';
+        if (subtitleEl) subtitleEl.innerText = activeSlide.subtitle || cfg.default_subtitle || 'Exclusive discount for you';
+
+        if (dotsContainer && slides.length > 1) {
+          const dots = dotsContainer.querySelectorAll('.popup-dot');
+          dots.forEach((d, idx) => {
+            d.className = idx === currentIndex
+              ? "popup-dot h-1.5 rounded-full transition-all duration-300 bg-indigo-500 w-4"
+              : "popup-dot h-1.5 rounded-full transition-all duration-300 bg-slate-600/80 w-1.5";
+          });
+        }
+      }
+
+      updateSlideUI();
+
+      if (slides.length > 1) {
+        if (state.popupTimer) clearInterval(state.popupTimer);
+        state.popupTimer = setInterval(() => {
+          currentIndex = (currentIndex + 1) % slides.length;
+          updateSlideUI();
+        }, 3500);
+      }
+
+      const closePopup = () => {
+        if (state.popupTimer) clearInterval(state.popupTimer);
+        modal.classList.add('hidden');
+      };
+
+      dismissBtn.onclick = closePopup;
+      document.getElementById('btn-close-entry-popup')?.addEventListener('click', closePopup);
+
+      modal.classList.remove('hidden');
     }
 
     async function refreshBalanceAndProfile() {
       if (!state.user) {
-        document.getElementById('ui-balance').innerText = '৳0.00';
+        const balEl = document.getElementById('ui-balance');
+        if (balEl) balEl.innerText = '৳0.00';
         return;
       }
       
       const { data: wal } = await supabase.from('wallets').select('balance').eq('user_id', state.user.id).maybeSingle();
       if (wal) {
         state.balance = parseFloat(wal.balance || 0);
-        document.getElementById('ui-balance').innerText = `৳${state.balance.toFixed(2)}`;
+        const balEl = document.getElementById('ui-balance');
+        if (balEl) balEl.innerText = `৳${state.balance.toFixed(2)}`;
       }
 
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', state.user.id).maybeSingle();
@@ -731,6 +887,10 @@
         clearInterval(state.carouselTimer);
         state.carouselTimer = null;
       }
+      if (state.flashCountdownTimer) {
+        clearInterval(state.flashCountdownTimer);
+        state.flashCountdownTimer = null;
+      }
 
       state.activeTab = tab;
       const navItems = ['home', 'store', 'orders', 'wallet', 'profile'];
@@ -748,6 +908,7 @@
       });
 
       const container = document.getElementById('app-view');
+      if (!container) return;
       if (tab === 'home') renderHome(container);
       if (tab === 'store') renderStore(container);
       if (tab === 'orders') renderOrders(container);
@@ -758,10 +919,44 @@
       if (tab === 'policies') renderPolicies(container);
     }
 
-    // 1. HOME SCREEN
+    // =========================================================================
+    // 1. HOME SCREEN (DROPDOWN ADS BANNER ATTACHED DIRECTLY BELOW HEADER)
+    // =========================================================================
     async function renderHome(el) {
-      const cur = i18n[state.lang];
+      const cur = i18n[state.lang] || i18n.bn;
       el.innerHTML = `
+        <!-- ATTACHED TOP ADS BANNER (SMOOTH DROPDOWN ANIMATION, NO REDIRECT BUTTON) -->
+        <div id="flash-sale-wrapper" class="hidden -mt-2 mb-2 banner-dropdown">
+          <div class="relative overflow-hidden bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 border border-indigo-500/30 rounded-2xl p-3 shadow-md">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 overflow-hidden">
+                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-rose-600 text-white flex items-center gap-1 shadow-sm shrink-0">
+                  <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                  <span id="flash-badge-text">OFFER</span>
+                </span>
+                <span id="flash-title-text" class="text-xs font-black text-white truncate">Special Announcement</span>
+              </div>
+
+              <!-- LIVE COUNTDOWN TIMER -->
+              <div id="flash-timer-box" class="flex items-center gap-1 font-mono text-[10px] font-extrabold text-amber-400 bg-slate-950/90 px-2 py-0.5 rounded-lg border border-amber-500/30 shrink-0">
+                <span id="flash-hrs">00</span>:<span id="flash-mins">00</span>:<span id="flash-secs">00</span>
+              </div>
+            </div>
+            
+            <div class="mt-1.5 flex items-center justify-between gap-2">
+              <p id="flash-desc-text" class="text-[10px] text-slate-300 font-medium truncate">Limited discount voucher available</p>
+              
+              <!-- 1-CLICK COPY COUPON CODE BADGE (NO OUTWARD LINK) -->
+              <div id="flash-coupon-wrapper" class="inline-flex items-center gap-1.5 bg-slate-950/80 px-2 py-0.5 rounded-md border border-dashed border-amber-400/60 cursor-pointer active:scale-95 transition-all shrink-0">
+                <span class="text-[8px] text-slate-400 uppercase font-bold">CODE:</span>
+                <span id="flash-coupon-code" class="text-[10px] font-mono font-black text-amber-400 tracking-wider">OCTOPUS</span>
+                <svg class="w-2.5 h-2.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FEATURED CAROUSEL WRAPPER -->
         <div id="featured-carousel-wrapper" class="space-y-2">
           <div class="flex items-center justify-between px-1">
             <h3 class="text-xs font-black tracking-wider text-slate-700 dark:text-slate-300 uppercase flex items-center gap-1.5">
@@ -806,12 +1001,70 @@
       document.getElementById('btn-explore-all')?.addEventListener('click', () => navigate('store'));
       document.getElementById('btn-home-deposit')?.addEventListener('click', () => navigate('wallet'));
 
+      initFlashSaleBanner();
       await loadHomeData();
+    }
+
+    function initFlashSaleBanner() {
+      const flash = state.flashSaleConfig;
+      if (!flash || !flash.is_active) return;
+
+      const wrapper = document.getElementById('flash-sale-wrapper');
+      if (!wrapper) return;
+
+      wrapper.classList.remove('hidden');
+
+      const badgeEl = document.getElementById('flash-badge-text');
+      const titleEl = document.getElementById('flash-title-text');
+      const descEl = document.getElementById('flash-desc-text');
+      const couponEl = document.getElementById('flash-coupon-code');
+      const couponWrap = document.getElementById('flash-coupon-wrapper');
+
+      if (badgeEl) badgeEl.innerText = flash.badge || 'FLASH SALE';
+      if (titleEl) titleEl.innerText = flash.title || 'Limited Time Discount';
+      if (descEl) descEl.innerText = flash.description || 'Use coupon code during purchase';
+      if (couponEl) couponEl.innerText = flash.coupon_code || 'SPECIAL';
+
+      if (!flash.coupon_code) couponWrap?.classList.add('hidden');
+
+      couponWrap?.addEventListener('click', async () => {
+        if (!flash.coupon_code) return;
+        const ok = await copyToClipboard(flash.coupon_code);
+        if (ok) notify(`কুপন কোড "${flash.coupon_code}" কপি হয়েছে!`, false);
+      });
+
+      const targetTime = new Date(flash.end_time || Date.now() + 86400000).getTime();
+
+      function updateCountdown() {
+        const now = Date.now();
+        const diff = targetTime - now;
+
+        if (diff <= 0) {
+          wrapper.classList.add('hidden');
+          if (state.flashCountdownTimer) clearInterval(state.flashCountdownTimer);
+          return;
+        }
+
+        const hrs = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        const hEl = document.getElementById('flash-hrs');
+        const mEl = document.getElementById('flash-mins');
+        const sEl = document.getElementById('flash-secs');
+
+        if (hEl) hEl.innerText = String(hrs).padStart(2, '0');
+        if (mEl) mEl.innerText = String(mins).padStart(2, '0');
+        if (sEl) sEl.innerText = String(secs).padStart(2, '0');
+      }
+
+      updateCountdown();
+      state.flashCountdownTimer = setInterval(updateCountdown, 1000);
     }
 
     async function loadHomeData() {
       const { data, error } = await supabase.from('customer_products_view').select('*').order('name');
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         state.products = data;
         state.featuredProducts = data.filter(p => p.is_featured === true);
         if (state.featuredProducts.length === 0) {
@@ -819,16 +1072,19 @@
         }
         setupInfiniteCarousel();
         renderProductCards('home-products-grid', data.slice(0, 6));
+      } else {
+        const grid = document.getElementById('home-products-grid');
+        if (grid) grid.innerHTML = `<div class="col-span-2 py-8 text-center text-xs text-slate-500 font-medium">কোনো প্রোডাক্ট পাওয়া যায়নি</div>`;
+        document.getElementById('featured-carousel-wrapper')?.classList.add('hidden');
       }
     }
 
-    // FEATURED CAROUSEL (OBJECT-CONTAIN: ছবি ১০০% দেখা যাবে, ওপর-নিচ কাটবে না)
     function setupInfiniteCarousel() {
       const track = document.getElementById('featured-track');
       const dotsContainer = document.getElementById('carousel-dots');
       const items = state.featuredProducts;
 
-      if (!track || items.length === 0) {
+      if (!track || !items || items.length === 0) {
         document.getElementById('featured-carousel-wrapper')?.classList.add('hidden');
         return;
       }
@@ -948,7 +1204,7 @@
 
     // 2. STORE SCREEN
     async function renderStore(el) {
-      const cur = i18n[state.lang];
+      const cur = i18n[state.lang] || i18n.bn;
       el.innerHTML = `
         <div class="space-y-3.5">
           <div class="relative">
@@ -987,15 +1243,14 @@
       const container = document.getElementById(containerId);
       if (!container) return;
 
-      if (items.length === 0) {
-        container.innerHTML = `<div class="col-span-2 py-12 text-center text-xs text-slate-500 font-medium">${i18n[state.lang].empty_stock}</div>`;
+      if (!items || items.length === 0) {
+        container.innerHTML = `<div class="col-span-2 py-12 text-center text-xs text-slate-500 font-medium">${(i18n[state.lang] || i18n.bn).empty_stock}</div>`;
         return;
       }
 
       container.innerHTML = items.map(p => `
-<div data-id="${p.id}" class="card-product-trigger cursor-pointer bg-white dark:bg-slate-900 card-shine-border rounded-3xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
+        <div data-id="${p.id}" class="card-product-trigger cursor-pointer bg-white dark:bg-slate-900 card-shine-border rounded-3xl overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
           <div>
-            <!-- ওপরের ফুল এজ-টু-এজ ছবি (কোনো ইনার বর্ডার ছাড়া) -->
             <div class="w-full h-36 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-950 dark:to-slate-900 overflow-hidden flex items-center justify-center relative">
               ${p.image_url 
                 ? `<img src="${p.image_url}" alt="${p.name}" class="w-full h-full object-cover" loading="lazy" />`
@@ -1006,13 +1261,11 @@
               </span>
             </div>
 
-            <!-- প্রোডাক্ট নাম -->
             <div class="p-3.5 pb-0">
               <h4 class="text-xs font-extrabold text-slate-900 dark:text-white line-clamp-2 leading-snug min-h-[32px]">${p.name}</h4>
             </div>
           </div>
 
-          <!-- প্রাইস ও ফুল-উইডথ বাটন -->
           <div class="p-3.5 pt-2 space-y-2">
             <div>
               <span class="text-[9px] text-slate-400 font-semibold uppercase block leading-none">Price</span>
@@ -1037,11 +1290,17 @@
       });
     }
 
-    // 4. PRODUCT DETAILS VIEW
+    // =========================================================================
+    // 4. PRODUCT DETAILS VIEW (WITH QUANTITY & REAL-TIME COUPON SYSTEM)
+    // =========================================================================
     function renderProductDetails(el, p) {
       if (!p) { navigate('store'); return; }
       state.selectedProduct = p;
-      const cur = i18n[state.lang];
+      state.selectedQuantity = 1;
+      state.appliedCoupon = null; // Reset coupon on opening
+
+      const cur = i18n[state.lang] || i18n.bn;
+      const unitPrice = parseFloat(p.selling_price) || 0;
 
       el.innerHTML = `
         <div class="space-y-4 animate-in fade-in duration-200">
@@ -1064,8 +1323,8 @@
             <div class="flex items-start justify-between gap-3">
               <h2 class="text-base font-extrabold text-slate-900 dark:text-white leading-snug">${p.name}</h2>
               <div class="text-right shrink-0">
-                <span class="text-[10px] text-slate-400 font-bold uppercase block leading-none">Price</span>
-                <span class="text-lg font-mono font-black text-indigo-600 dark:text-emerald-400">৳${parseFloat(p.selling_price).toFixed(2)}</span>
+                <span class="text-[10px] text-slate-400 font-bold uppercase block leading-none">${cur.unit_price_label}</span>
+                <span class="text-lg font-mono font-black text-indigo-600 dark:text-emerald-400">৳${unitPrice.toFixed(2)}</span>
               </div>
             </div>
             <div class="pt-3 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
@@ -1073,8 +1332,69 @@
             </div>
           </div>
 
-          <!-- GMAIL ADDRESS INPUT ONLY -->
-          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl space-y-3.5 shadow-sm">
+          <!-- QUANTITY, COUPON & CHECKOUT SECTION -->
+          <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-3xl space-y-4 shadow-sm">
+            
+            <!-- QUANTITY SELECTOR -->
+            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-3.5 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+                  ${cur.quantity_label}
+                </span>
+                <span class="text-[10px] text-slate-400">
+                  ${cur.unit_price_label}: <span class="font-mono text-slate-600 dark:text-slate-300 font-semibold">৳${unitPrice.toFixed(2)}</span>
+                </span>
+              </div>
+
+              <div class="flex items-center space-x-1.5 bg-white dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <button type="button" id="btn-qty-minus" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center transition active:scale-90 disabled:opacity-30 disabled:cursor-not-allowed">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20 12H4"/></svg>
+                </button>
+
+                <input type="number" id="input-qty-val" value="1" min="1" max="50" readonly
+                  class="w-9 text-center bg-transparent font-mono font-black text-sm text-slate-900 dark:text-white focus:outline-none select-none" />
+
+                <button type="button" id="btn-qty-plus" class="w-8 h-8 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center transition active:scale-90">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- COUPON CODE INPUT -->
+            <div class="bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl p-3 space-y-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                ${cur.coupon_label}
+              </label>
+              <div class="flex gap-2">
+                <input type="text" id="input-coupon-code" placeholder="e.g. OCTOPUS" class="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-mono uppercase font-bold outline-none focus:border-indigo-500 transition-colors" />
+                <button type="button" id="btn-apply-coupon" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow transition-all active:scale-95 disabled:opacity-50">
+                  ${cur.apply_coupon}
+                </button>
+              </div>
+              <div id="coupon-feedback-msg" class="text-[11px] font-semibold hidden"></div>
+            </div>
+
+            <!-- PRICE SUMMARY BREAKDOWN -->
+            <div class="p-3 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800/80 rounded-2xl space-y-1.5 text-xs">
+              <div class="flex justify-between text-slate-500 dark:text-slate-400">
+                <span>সাবটোটাল / Subtotal:</span>
+                <span id="display-subtotal" class="font-mono text-slate-900 dark:text-white font-semibold">৳${unitPrice.toFixed(2)}</span>
+              </div>
+              
+              <div id="row-coupon-discount" class="flex justify-between text-rose-500 dark:text-rose-400 hidden">
+                <span>${cur.coupon_discount}:</span>
+                <span id="display-coupon-discount" class="font-mono font-bold">-৳0.00</span>
+              </div>
+
+              <div class="flex items-center justify-between pt-1.5 border-t border-slate-200 dark:border-slate-800 font-extrabold">
+                <span class="text-slate-700 dark:text-slate-200">${cur.total_payable_label}:</span>
+                <span id="display-total-calc-price" class="text-lg font-mono font-black text-emerald-600 dark:text-emerald-400">
+                  ৳${unitPrice.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            <!-- GMAIL ADDRESS INPUT -->
             <div>
               <label class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
@@ -1090,14 +1410,117 @@
 
             <button id="btn-details-purchase" class="btn-shine w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white font-extrabold text-xs rounded-2xl transition-all shadow-xl shadow-indigo-600/30 glow-primary flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none">
               <span id="details-buy-spinner" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin hidden"></span>
-              <span id="details-buy-text">${cur.pay_and_buy} (৳${parseFloat(p.selling_price).toFixed(2)})</span>
+              <span id="details-buy-text">${cur.pay_and_buy} (৳${unitPrice.toFixed(2)})</span>
             </button>
           </div>
         </div>
       `;
 
+      function updateCalculationUI() {
+        const qty = state.selectedQuantity;
+        const subtotal = unitPrice * qty;
+        let discount = 0;
+
+        if (state.appliedCoupon) {
+          discount = state.appliedCoupon.discount_amount || 0;
+        }
+
+        const finalTotal = Math.max(0, subtotal - discount).toFixed(2);
+
+        document.getElementById('input-qty-val').value = qty;
+        document.getElementById('display-subtotal').innerText = `৳${subtotal.toFixed(2)}`;
+
+        const rowDiscount = document.getElementById('row-coupon-discount');
+        const displayDiscount = document.getElementById('display-coupon-discount');
+
+        if (discount > 0) {
+          rowDiscount.classList.remove('hidden');
+          displayDiscount.innerText = `-৳${discount.toFixed(2)}`;
+        } else {
+          rowDiscount.classList.add('hidden');
+        }
+
+        document.getElementById('display-total-calc-price').innerText = `৳${finalTotal}`;
+        document.getElementById('details-buy-text').innerText = `${cur.pay_and_buy} (৳${finalTotal})`;
+
+        const minusBtn = document.getElementById('btn-qty-minus');
+        if (minusBtn) minusBtn.disabled = (qty <= 1);
+      }
+
+      document.getElementById('btn-qty-plus')?.addEventListener('click', () => {
+        if (state.selectedQuantity < 50) {
+          state.selectedQuantity++;
+          // Re-calculate or reset coupon if quantity changes
+          state.appliedCoupon = null;
+          const msg = document.getElementById('coupon-feedback-msg');
+          if (msg) msg.classList.add('hidden');
+          updateCalculationUI();
+        }
+      });
+
+      document.getElementById('btn-qty-minus')?.addEventListener('click', () => {
+        if (state.selectedQuantity > 1) {
+          state.selectedQuantity--;
+          state.appliedCoupon = null;
+          const msg = document.getElementById('coupon-feedback-msg');
+          if (msg) msg.classList.add('hidden');
+          updateCalculationUI();
+        }
+      });
+
+      // COUPON VALIDATION HANDLER
+      document.getElementById('btn-apply-coupon')?.addEventListener('click', async () => {
+        const codeInput = document.getElementById('input-coupon-code').value.trim();
+        const msg = document.getElementById('coupon-feedback-msg');
+        const applyBtn = document.getElementById('btn-apply-coupon');
+
+        if (!codeInput) {
+          notify("কুপন কোড লিখুন", true);
+          return;
+        }
+
+        const subtotal = unitPrice * state.selectedQuantity;
+        applyBtn.disabled = true;
+        applyBtn.innerText = "...";
+
+        try {
+          const { data, error } = await supabase.rpc('validate_coupon', {
+            p_code: codeInput,
+            p_amount: subtotal
+          });
+
+          if (error) throw error;
+
+          if (data && data.valid) {
+            state.appliedCoupon = {
+              code: data.code,
+              discount_amount: parseFloat(data.discount_amount || 0)
+            };
+
+            msg.className = "text-[11px] font-semibold text-emerald-500";
+            msg.innerText = `${data.message} (ছাড়: ৳${data.discount_amount})`;
+            msg.classList.remove('hidden');
+            notify(data.message, false);
+            updateCalculationUI();
+          } else {
+            state.appliedCoupon = null;
+            msg.className = "text-[11px] font-semibold text-rose-500";
+            msg.innerText = data?.message || "কুপনটি প্রযোজ্য নয়";
+            msg.classList.remove('hidden');
+            updateCalculationUI();
+          }
+        } catch (err) {
+          notify(err.message, true);
+        } finally {
+          applyBtn.disabled = false;
+          applyBtn.innerText = cur.apply_coupon;
+        }
+      });
+
       document.getElementById('btn-back-to-store')?.addEventListener('click', () => navigate('store'));
       document.getElementById('btn-details-purchase')?.addEventListener('click', executeDetailsPurchase);
+
+      updateCalculationUI();
     }
 
     async function executeDetailsPurchase() {
@@ -1105,11 +1528,17 @@
       if (state.isPurchasing) return;
 
       const customInput = document.getElementById('details-custom-input').value.trim();
-      if (!customInput) { notify(i18n[state.lang].require_input, true); return; }
+      if (!customInput) { notify((i18n[state.lang] || i18n.bn).require_input, true); return; }
 
       const p = state.selectedProduct;
-      if (state.balance < parseFloat(p.selling_price)) {
-        notify(i18n[state.lang].insufficient_balance, true);
+      const qty = state.selectedQuantity || 1;
+      const unitPrice = parseFloat(p.selling_price) || 0;
+      const subtotal = unitPrice * qty;
+      const discount = state.appliedCoupon ? (state.appliedCoupon.discount_amount || 0) : 0;
+      const totalAmount = Math.max(0, subtotal - discount);
+
+      if (state.balance < totalAmount) {
+        notify((i18n[state.lang] || i18n.bn).insufficient_balance, true);
         return;
       }
 
@@ -1119,28 +1548,29 @@
       const text = document.getElementById('details-buy-text');
 
       btn.disabled = true;
-      spinner.classList.remove('hidden');
-      text.innerText = i18n[state.lang].processing;
+      spinner?.classList.remove('hidden');
+      if (text) text.innerText = (i18n[state.lang] || i18n.bn).processing;
 
       try {
         const idempotencyKey = generateUUID();
 
+        // ATOMIC PURCHASE WITH COUPON CODE SUPPORT
         const { data: orderId, error: orderErr } = await supabase.rpc('place_order_atomic', {
           p_product_id: p.id,
-          p_quantity: 1,
-          p_customer_input: { target: customInput },
-          p_idempotency_key: idempotencyKey
+          p_quantity: qty,
+          p_customer_input: { target: customInput, quantity: qty },
+          p_idempotency_key: idempotencyKey,
+          p_coupon_code: state.appliedCoupon ? state.appliedCoupon.code : null
         });
 
         if (orderErr) throw orderErr;
 
         notify(state.lang === 'bn' ? 'আপনার অর্ডারটি প্রসেসিং হচ্ছে...' : 'Your order is processing...');
 
-        const { data: edgeRes, error: edgeErr } = await supabase.functions.invoke('order-reseller-process', {
+        await supabase.functions.invoke('order-reseller-process', {
           body: { order_id: orderId }
         });
 
-        // রিলোড দিয়ে ডাটাবেজ থেকে অর্ডারটির সর্বশেষ স্ট্যাটাস ও ডেলিভারি ডাটা পড়া
         const { data: finalOrder } = await supabase
           .from('orders')
           .select('*, products(name)')
@@ -1160,14 +1590,12 @@
       } finally {
         state.isPurchasing = false;
         btn.disabled = false;
-        spinner.classList.add('hidden');
-        text.innerText = `${i18n[state.lang].pay_and_buy} (৳${parseFloat(p.selling_price).toFixed(2)})`;
+        spinner?.classList.add('hidden');
+        if (text) text.innerText = `${(i18n[state.lang] || i18n.bn).pay_and_buy} (৳${totalAmount.toFixed(2)})`;
       }
     }
 
-    // =========================================================================
-    // 5. ORDER CONFIRMED & DELIVERY RECEIPT (REFUND / SUCCESS ডিফারেনশিয়েটেড)
-    // =========================================================================
+    // 5. ORDER CONFIRMED & DELIVERY RECEIPT
     function renderOrderSuccess(el, order) {
       if (!order) {
         navigate('orders');
@@ -1176,16 +1604,16 @@
 
       const prodName = order.products?.name || state.selectedProduct?.name || "Digital Product";
       const totalAmt = parseFloat(order.total_amount || 0).toFixed(2);
+      const orderQty = parseInt(order.quantity || 1, 10);
+      const unitPriceAmt = (orderQty > 0 ? (parseFloat(totalAmt) / orderQty) : parseFloat(totalAmt)).toFixed(2);
       const orderShortId = (order.id || "").toUpperCase().slice(0, 8);
       const customerEmail = order.customer_input?.target || state.user?.email || "";
       const statusUpper = (order.status || '').toUpperCase();
       const isRefundedOrFailed = (statusUpper === 'REFUNDED' || statusUpper === 'FAILED' || statusUpper === 'CANCELLED');
 
-      // ১. রিফান্ড / ফেইল্ড কেস (স্ক্রিনশট ২-এর সমাধান)
       if (isRefundedOrFailed) {
         el.innerHTML = `
           <div class="space-y-4 animate-in fade-in duration-300 pb-4">
-            <!-- REFUND / FAILED WARNING HEADER -->
             <div class="text-center pt-2 space-y-2">
               <div class="w-14 h-14 bg-amber-500/15 border-2 border-amber-500/80 text-amber-400 rounded-full flex items-center justify-center mx-auto shadow-xl shadow-amber-500/20">
                 <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
@@ -1195,13 +1623,11 @@
                 Order #${orderShortId} Unsuccessful
               </h2>
 
-              <!-- স্পষ্ট রিফান্ড নোটিশ বক্স (ইউজার সহজে বুঝতে পারবে) -->
               <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-xs text-amber-500 dark:text-amber-300 leading-relaxed font-bold max-w-sm mx-auto shadow-sm">
                 যান্ত্রিক ত্রুটির কারণে অর্ডারটি সফল হয়নি এবং আপনার সম্পূর্ণ টাকা (৳${totalAmt}) ওয়ালেটে রিফান্ড করা হয়েছে।
               </div>
             </div>
 
-            <!-- ORDER INVOICE CARD (WITH REFUNDED STATUS) -->
             <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3.5">
               <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">Order Invoice</h3>
@@ -1217,7 +1643,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-slate-500">Quantity</span>
-                  <span class="font-mono font-bold text-slate-900 dark:text-white">${order.quantity || 1}</span>
+                  <span class="font-mono font-bold text-indigo-500 dark:text-indigo-400">${orderQty} Qty</span>
                 </div>
                 <div class="flex justify-between items-center">
                   <span class="text-slate-500">Refunded Amount</span>
@@ -1234,7 +1660,6 @@
               </div>
             </div>
 
-            <!-- KEEP SHOPPING BUTTON -->
             <div class="pt-2">
               <button id="btn-keep-shopping" class="btn-shine w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white font-extrabold text-xs rounded-2xl shadow-xl shadow-indigo-600/30 transition-all">
                 Keep shopping (অন্যান্য প্রোডাক্ট দেখুন)
@@ -1247,7 +1672,6 @@
         return;
       }
 
-      // ২. সফল অর্ডার কেস (ডেলিভারি ডাটা আনলক বক্স সহ)
       const deliveryText = formatDeliveryText(order.delivery_payload);
 
       el.innerHTML = `
@@ -1302,11 +1726,15 @@ ${deliveryText}
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-slate-500">Quantity</span>
-                <span class="font-mono font-bold text-slate-900 dark:text-white">${order.quantity || 1}</span>
+                <span class="font-mono font-bold text-indigo-500 dark:text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20">${orderQty} Qty</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-slate-500">Unit price</span>
-                <span class="font-mono font-bold text-indigo-600 dark:text-emerald-400">৳${totalAmt}</span>
+                <span class="font-mono text-slate-700 dark:text-slate-300">৳${unitPriceAmt}</span>
+              </div>
+              <div class="flex justify-between items-center border-t border-slate-100 dark:border-slate-800/60 pt-2">
+                <span class="text-slate-700 dark:text-slate-300 font-bold">Total Paid</span>
+                <span class="font-mono font-black text-indigo-600 dark:text-emerald-400 text-sm">৳${totalAmt}</span>
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-slate-500">Delivery</span>
@@ -1332,7 +1760,6 @@ ${deliveryText}
             </div>
           </div>
 
-          <!-- KEEP SHOPPING BUTTON -->
           <div class="pt-2">
             <button id="btn-keep-shopping" class="btn-shine w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white font-extrabold text-xs rounded-2xl shadow-xl shadow-indigo-600/30 transition-all">
               Keep shopping (আরও কেনাকাটা করুন)
@@ -1368,9 +1795,9 @@ ${deliveryText}
       if (!state.user) {
         el.innerHTML = `
           <div class="text-center py-16 space-y-3">
-            <p class="text-xs text-slate-500 font-medium">${i18n[state.lang].login_to_view_orders}</p>
+            <p class="text-xs text-slate-500 font-medium">${(i18n[state.lang] || i18n.bn).login_to_view_orders}</p>
             <button id="btn-order-auth" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow-md">
-              ${i18n[state.lang].tab_login}
+              ${(i18n[state.lang] || i18n.bn).tab_login}
             </button>
           </div>
         `;
@@ -1383,14 +1810,14 @@ ${deliveryText}
       const { data: orders } = await supabase.from('orders').select('*, products(name)').order('created_at', { ascending: false });
 
       if (!orders || orders.length === 0) {
-        el.innerHTML = `<div class="text-center py-16 text-xs text-slate-500 font-medium">${i18n[state.lang].no_orders}</div>`;
+        el.innerHTML = `<div class="text-center py-16 text-xs text-slate-500 font-medium">${(i18n[state.lang] || i18n.bn).no_orders}</div>`;
         return;
       }
 
       el.innerHTML = `
         <div class="space-y-3">
           <div class="flex items-center justify-between px-1">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">${i18n[state.lang].order_ledger}</h3>
+            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">${(i18n[state.lang] || i18n.bn).order_ledger}</h3>
             <span class="text-[10px] text-slate-500">ডেলিভারি দেখতে অর্ডারে চাপ দিন</span>
           </div>
 
@@ -1401,7 +1828,10 @@ ${deliveryText}
                   <div class="font-bold text-slate-900 dark:text-white truncate max-w-[190px]">
                     ${o.products?.name || 'Digital Item'}
                   </div>
-                  <div class="font-mono text-[11px] text-indigo-400 font-bold">#${o.id.slice(0, 8).toUpperCase()}</div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-indigo-400 font-bold">#${o.id.slice(0, 8).toUpperCase()}</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">${o.quantity || 1} Qty</span>
+                  </div>
                   <div class="text-[10px] text-slate-400 font-mono">${formatExactTimestamp(o.created_at)}</div>
                 </div>
 
@@ -1427,34 +1857,37 @@ ${deliveryText}
       });
     }
 
-    // 7. WALLET SCREEN
+    // =========================================================================
+    // 7. WALLET SCREEN (MINUS DEDUCTION IN RED)
+    // =========================================================================
     async function renderWallet(el) {
+      const cur = i18n[state.lang] || i18n.bn;
       el.innerHTML = `
         <div class="space-y-4">
           <div class="bg-gradient-to-b from-slate-900 to-[#0c1220] border border-slate-800 p-6 rounded-3xl space-y-4 text-white shadow-xl glow-primary">
             <div>
-              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${i18n[state.lang].total_balance}</span>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">${cur.total_balance}</span>
               <h2 class="text-3xl font-mono font-black text-emerald-400 mt-1">৳${state.balance.toFixed(2)}</h2>
             </div>
             
             <div class="pt-4 border-t border-slate-800 space-y-2.5">
               <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                ${i18n[state.lang].deposit_header}
+                ${cur.deposit_header}
               </label>
               <div class="flex gap-2">
                 <input type="number" id="deposit-amt-input" placeholder="100" class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white font-mono outline-none focus:border-indigo-500" />
                 <button id="btn-exec-deposit" class="btn-shine px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-transform active:scale-95 flex items-center gap-1.5 disabled:opacity-50 disabled:pointer-events-none">
                   <span id="deposit-spinner" class="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin hidden"></span>
-                  <span id="deposit-text">${i18n[state.lang].quick_deposit}</span>
+                  <span id="deposit-text">${cur.quick_deposit}</span>
                 </button>
               </div>
             </div>
           </div>
 
           <div class="space-y-2">
-            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">${i18n[state.lang].ledger_title}</h4>
+            <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-400">${cur.ledger_title}</h4>
             <div id="wallet-statement-list" class="space-y-2">
-              <div class="text-center py-8 text-xs text-slate-500 font-medium">${i18n[state.lang].loading_ledger}</div>
+              <div class="text-center py-8 text-xs text-slate-500 font-medium">${cur.loading_ledger}</div>
             </div>
           </div>
         </div>
@@ -1467,7 +1900,8 @@ ${deliveryText}
         const list = document.getElementById('wallet-statement-list');
         if (txs && txs.length > 0) {
           list.innerHTML = txs.map(t => {
-            const isPositive = parseFloat(t.amount) >= 0;
+            const numAmt = parseFloat(t.amount || 0);
+            const isPositive = numAmt > 0;
             const statusLabel = isPositive ? "Approved" : "Completed";
             const trxId = t.reference_id || "";
             
@@ -1479,7 +1913,7 @@ ${deliveryText}
                   
                   ${trxId ? `
                     <div class="flex items-center gap-1.5 pt-0.5">
-                      <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">TrxID:</span>
+                      <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">TRXID:</span>
                       <span class="font-mono font-bold text-slate-800 dark:text-slate-100 text-[11px] tracking-tight">${trxId}</span>
                       <button data-copy="${trxId}" class="btn-copy-trx ml-1 px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md text-[10px] font-bold border border-slate-200 dark:border-slate-700 flex items-center gap-1 transition-all active:scale-95 shadow-sm">
                         <svg class="w-3 h-3 copy-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -1488,9 +1922,11 @@ ${deliveryText}
                     </div>
                   ` : ''}
                 </div>
+                
+                <!-- MINUS AMOUNT IN RED COLOR -->
                 <div class="text-right shrink-0">
-                  <div class="font-mono font-bold ${isPositive ? 'text-emerald-500' : 'text-slate-400'}">
-                    ${isPositive ? '+' : ''}৳${parseFloat(t.amount).toFixed(2)}
+                  <div class="font-mono font-bold ${isPositive ? 'text-emerald-500 dark:text-emerald-400' : 'text-rose-500 dark:text-rose-400'}">
+                    ${isPositive ? '+' : ''}৳${numAmt.toFixed(2)}
                   </div>
                   <span class="inline-block mt-0.5 px-2 py-0.5 text-[9px] font-bold rounded-full ${
                     isPositive 
@@ -1529,7 +1965,7 @@ ${deliveryText}
           });
 
         } else {
-          list.innerHTML = `<div class="text-center py-8 text-xs text-slate-500 font-medium">${i18n[state.lang].no_tx}</div>`;
+          list.innerHTML = `<div class="text-center py-8 text-xs text-slate-500 font-medium">${cur.no_tx}</div>`;
         }
       }
     }
@@ -1542,7 +1978,7 @@ ${deliveryText}
       const amount = parseFloat(amtInput?.value || 0);
 
       if (isNaN(amount) || amount < 10) {
-        notify(i18n[state.lang].deposit_min, true);
+        notify((i18n[state.lang] || i18n.bn).deposit_min, true);
         return;
       }
 
@@ -1580,7 +2016,7 @@ ${deliveryText}
         state.isDepositing = false;
         btn.disabled = false;
         spinner?.classList.add('hidden');
-        if (btnText) btnText.innerText = i18n[state.lang].quick_deposit;
+        if (btnText) btnText.innerText = (i18n[state.lang] || i18n.bn).quick_deposit;
       }
     }
 
@@ -1592,7 +2028,7 @@ ${deliveryText}
       const phoneNum = prof.phone || (state.user ? state.user.user_metadata?.phone : '') || 'N/A';
       const emailAddr = state.user?.email || 'guest@system';
       const avatarSrc = state.selectedAvatarUrl || DEFAULT_AVATARS[0];
-      const cur = i18n[state.lang];
+      const cur = i18n[state.lang] || i18n.bn;
 
       el.innerHTML = `
         <div class="space-y-4 animate-in fade-in duration-200">
@@ -1731,7 +2167,7 @@ ${deliveryText}
     // 9. POLICIES VIEW
     function renderPolicies(el) {
       const pLang = state.policyLang || 'bn';
-      const cur = i18n[state.lang];
+      const cur = i18n[state.lang] || i18n.bn;
       const isBnPolicy = pLang === 'bn';
 
       const content = state.activePolicyTab === 'privacy'
@@ -1818,35 +2254,39 @@ ${deliveryText}
       const fullName = prof.full_name || (state.user ? state.user.user_metadata?.full_name : '') || '';
       const phoneNum = prof.phone || (state.user ? state.user.user_metadata?.phone : '') || '';
 
-      document.getElementById('edit-name').value = fullName;
-      document.getElementById('edit-phone').value = phoneNum;
+      const nameInput = document.getElementById('edit-name');
+      if (nameInput) nameInput.value = fullName;
+      const phoneInput = document.getElementById('edit-phone');
+      if (phoneInput) phoneInput.value = phoneNum;
 
       const grid = document.getElementById('avatar-selection-grid');
-      grid.innerHTML = DEFAULT_AVATARS.map((url, idx) => `
-        <div data-url="${url}" class="avatar-option cursor-pointer w-12 h-12 rounded-full overflow-hidden border-2 transition-all ${
-          (state.selectedAvatarUrl === url || (!state.selectedAvatarUrl && idx === 0))
-            ? 'border-indigo-600 ring-2 ring-indigo-600/40 scale-105' 
-            : 'border-transparent hover:border-slate-400'
-        }">
-          <img src="${url}" alt="Avatar ${idx+1}" class="w-full h-full object-cover" />
-        </div>
-      `).join('');
+      if (grid) {
+        grid.innerHTML = DEFAULT_AVATARS.map((url, idx) => `
+          <div data-url="${url}" class="avatar-option cursor-pointer w-12 h-12 rounded-full overflow-hidden border-2 transition-all ${
+            (state.selectedAvatarUrl === url || (!state.selectedAvatarUrl && idx === 0))
+              ? 'border-indigo-600 ring-2 ring-indigo-600/40 scale-105' 
+              : 'border-transparent hover:border-slate-400'
+          }">
+            <img src="${url}" alt="Avatar ${idx+1}" class="w-full h-full object-cover" />
+          </div>
+        `).join('');
 
-      grid.querySelectorAll('.avatar-option').forEach(opt => {
-        opt.addEventListener('click', () => {
-          state.selectedAvatarUrl = opt.dataset.url;
-          grid.querySelectorAll('.avatar-option').forEach(o => {
-            o.className = "avatar-option cursor-pointer w-12 h-12 rounded-full overflow-hidden border-2 border-transparent hover:border-slate-400 transition-all";
+        grid.querySelectorAll('.avatar-option').forEach(opt => {
+          opt.addEventListener('click', () => {
+            state.selectedAvatarUrl = opt.dataset.url;
+            grid.querySelectorAll('.avatar-option').forEach(o => {
+              o.className = "avatar-option cursor-pointer w-12 h-12 rounded-full overflow-hidden border-2 border-transparent hover:border-slate-400 transition-all";
+            });
+            opt.className = "avatar-option cursor-pointer w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-600 ring-2 ring-indigo-600/40 scale-105 transition-all";
           });
-          opt.className = "avatar-option cursor-pointer w-12 h-12 rounded-full overflow-hidden border-2 border-indigo-600 ring-2 ring-indigo-600/40 scale-105 transition-all";
         });
-      });
+      }
 
-      document.getElementById('edit-profile-modal').classList.remove('hidden');
+      document.getElementById('edit-profile-modal')?.classList.remove('hidden');
     }
 
     document.getElementById('btn-close-edit-modal')?.addEventListener('click', () => {
-      document.getElementById('edit-profile-modal').classList.add('hidden');
+      document.getElementById('edit-profile-modal')?.classList.add('hidden');
     });
 
     document.getElementById('btn-save-profile')?.addEventListener('click', async () => {
@@ -1860,8 +2300,8 @@ ${deliveryText}
       const btnText = document.getElementById('edit-save-text');
 
       btn.disabled = true;
-      spinner.classList.remove('hidden');
-      btnText.innerText = "Saving...";
+      spinner?.classList.remove('hidden');
+      if (btnText) btnText.innerText = "Saving...";
 
       try {
         const { error } = await supabase.from('profiles').update({
@@ -1874,31 +2314,32 @@ ${deliveryText}
         if (error) throw error;
 
         notify("প্রোফাইল সংরক্ষিত হয়েছে!", false);
-        document.getElementById('edit-profile-modal').classList.add('hidden');
+        document.getElementById('edit-profile-modal')?.classList.add('hidden');
         await refreshBalanceAndProfile();
-        renderProfile(document.getElementById('app-view'));
+        const main = document.getElementById('app-view');
+        if (main) renderProfile(main);
       } catch (err) {
         notify(err.message, true);
       } finally {
         state.isSavingProfile = false;
         btn.disabled = false;
-        spinner.classList.add('hidden');
-        btnText.innerText = i18n[state.lang].save_changes;
+        spinner?.classList.add('hidden');
+        if (btnText) btnText.innerText = (i18n[state.lang] || i18n.bn).save_changes;
       }
     });
 
     // SUPPORT TOGGLER
     const supportFolder = document.getElementById('support-folder');
     document.getElementById('btn-support-trigger')?.addEventListener('click', () => {
-      supportFolder.classList.toggle('hidden');
+      supportFolder?.classList.toggle('hidden');
     });
     document.getElementById('btn-close-support')?.addEventListener('click', () => {
-      supportFolder.classList.add('hidden');
+      supportFolder?.classList.add('hidden');
     });
 
     // AUTH MODAL
     function openAuthModal() {
-      document.getElementById('auth-modal').classList.remove('hidden');
+      document.getElementById('auth-modal')?.classList.remove('hidden');
     }
 
     async function handleAuthSubmission() {
@@ -1912,7 +2353,7 @@ ${deliveryText}
       const btn = document.getElementById('btn-auth-submit');
       const spinner = document.getElementById('btn-auth-spinner');
       btn.disabled = true;
-      spinner.classList.remove('hidden');
+      spinner?.classList.remove('hidden');
 
       try {
         if (state.authMode === 'login') {
@@ -1940,14 +2381,14 @@ ${deliveryText}
           notify("অ্যাকাউন্ট তৈরি ও লগইন সফল হয়েছে!");
         }
 
-        document.getElementById('auth-modal').classList.add('hidden');
+        document.getElementById('auth-modal')?.classList.add('hidden');
         await refreshBalanceAndProfile();
         navigate(state.activeTab);
       } catch (err) {
         notify(err.message, true);
       } finally {
         btn.disabled = false;
-        spinner.classList.add('hidden');
+        spinner?.classList.add('hidden');
       }
     }
 
@@ -1967,7 +2408,7 @@ ${deliveryText}
       }
     }
 
-    document.getElementById('btn-close-auth')?.addEventListener('click', () => document.getElementById('auth-modal').classList.add('hidden'));
+    document.getElementById('btn-close-auth')?.addEventListener('click', () => document.getElementById('auth-modal')?.classList.add('hidden'));
     document.getElementById('btn-auth-submit')?.addEventListener('click', handleAuthSubmission);
     document.getElementById('btn-quick-deposit-top')?.addEventListener('click', () => navigate('wallet'));
 
@@ -1975,16 +2416,18 @@ ${deliveryText}
       state.authMode = 'login';
       document.getElementById('tab-login').className = "flex-1 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition-all";
       document.getElementById('tab-signup').className = "flex-1 py-1.5 rounded-lg text-slate-500 font-bold transition-all";
-      document.getElementById('signup-extra-fields').classList.add('hidden');
-      document.getElementById('btn-auth-text').innerText = i18n[state.lang].btn_login_submit;
+      document.getElementById('signup-extra-fields')?.classList.add('hidden');
+      const btnAuth = document.getElementById('btn-auth-text');
+      if (btnAuth) btnAuth.innerText = (i18n[state.lang] || i18n.bn).btn_login_submit;
     });
 
     document.getElementById('tab-signup')?.addEventListener('click', () => {
       state.authMode = 'signup';
       document.getElementById('tab-signup').className = "flex-1 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition-all";
       document.getElementById('tab-login').className = "flex-1 py-1.5 rounded-lg text-slate-500 font-bold transition-all";
-      document.getElementById('signup-extra-fields').classList.remove('hidden');
-      document.getElementById('btn-auth-text').innerText = i18n[state.lang].btn_signup_submit;
+      document.getElementById('signup-extra-fields')?.classList.remove('hidden');
+      const btnAuth = document.getElementById('btn-auth-text');
+      if (btnAuth) btnAuth.innerText = (i18n[state.lang] || i18n.bn).btn_signup_submit;
     });
 
     document.getElementById('nav-home')?.addEventListener('click', () => navigate('home'));
@@ -1994,9 +2437,27 @@ ${deliveryText}
     document.getElementById('nav-profile')?.addEventListener('click', () => navigate('profile'));
 
     async function boot() {
-      applyTheme(state.theme);
-      applyLanguage(state.lang);
-      await loadGlobalSettings();
+      try {
+        applyTheme(state.theme);
+        applyLanguage(state.lang);
+        navigate('home');
+      } catch (err) {
+        console.error("UI init error:", err);
+      }
+
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          splash.style.opacity = '0';
+          setTimeout(() => splash.remove(), 400);
+        }
+      }, 500);
+
+      try {
+        await loadGlobalSettings();
+      } catch (e) {
+        console.error("Settings load error:", e);
+      }
 
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -2008,16 +2469,11 @@ ${deliveryText}
         console.error("Session restore error:", e);
       }
 
-      await checkPaymentReturnVerification();
-      navigate('home');
-
-      setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        if (splash) {
-          splash.style.opacity = '0';
-          setTimeout(() => splash.remove(), 500);
-        }
-      }, 600);
+      try {
+        await checkPaymentReturnVerification();
+      } catch (e) {
+        console.error("Payment check error:", e);
+      }
     }
 
     boot();
