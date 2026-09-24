@@ -1139,7 +1139,8 @@
           return;
         }
 
-        const hrs = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hrs = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
@@ -1147,7 +1148,14 @@
         const mEl = document.getElementById('flash-mins');
         const sEl = document.getElementById('flash-secs');
 
-        if (hEl) hEl.innerText = String(hrs).padStart(2, '0');
+        // ১ দিনের বেশি হলে দিন (যেমন: 7d), আর ১ দিনের নিচে নামলে ঘণ্টা (যেমন: 18h বা 05) দেখাবে
+        if (hEl) {
+          if (days > 0) {
+            hEl.innerText = `${days}d`;
+          } else {
+            hEl.innerText = String(hrs).padStart(2, '0');
+          }
+        }
         if (mEl) mEl.innerText = String(mins).padStart(2, '0');
         if (sEl) sEl.innerText = String(secs).padStart(2, '0');
       }
