@@ -253,11 +253,13 @@
     let supportSettings = { whatsapp: "8801700000000", phone: "01700000000", telegram: "" };
     let legalPolicies = { privacy_bn: "", privacy_en: "", refund_bn: "", refund_en: "" };
     
-    // CAMPAIGN CONFIGS
+    // SELECTED PRODUCTS FOR NEW COUPON (MULTI-SELECT SET)
+    let selectedCouponProductIds = new Set();
+    let isAllProductsMode = true;
+
     let popupBannerConfig = { is_active: false, default_title: "Special Offer", default_subtitle: "Exclusive discount for you", slides: [] };
     let flashSaleConfig = { is_active: false, badge: "OFFER", title: "Special Deal", description: "Use coupon for instant discount", coupon_code: "OCTOPUS", end_time: "" };
 
-    // ডাবল-ক্লিক লক ফ্ল্যাগস
     let isSyncing = false;
     let isSavingSettings = false;
     let isSavingPolicies = false;
@@ -375,6 +377,10 @@
 
         const { data: flashData } = await supabase.from('settings').select('value').eq('key', 'flash_sale').maybeSingle();
         if (flashData && flashData.value) flashSaleConfig = { ...flashSaleConfig, ...flashData.value };
+
+        // কুপনগুলো ব্যাকগ্রাউন্ডে ক্যাশ করা
+        const { data: cpns } = await supabase.from('coupons').select('*').order('created_at', { ascending: false });
+        cachedCoupons = cpns || [];
 
         const titleText = siteSettings.site_title || 'DIGITAL OCTOPUS';
         document.getElementById('sidebar-site-title').innerText = titleText;
@@ -656,7 +662,7 @@
     }
 
     // =========================================================================
-    // 2. PRICING & MARGIN MATRIX
+    // 2. PRICING & MARGIN MATRIX (WITH RED CIRCLE % BADGE ON COUPON PRODUCTS)
     // =========================================================================
     async function renderPricingEngine() {
       const main = document.getElementById('admin-main');
@@ -670,8 +676,12 @@
 
       cachedProducts = products || [];
       selectedProductIds.clear();
-      const currentSavedRate = parseFloat(siteSettings.usdt_rate || 125);
 
+      // অ্যাক্টিভ কুপনগুলো রিফ্রেশ
+      const { data: cpns } = await supabase.from('coupons').select('*').eq('is_active', true);
+      cachedCoupons = cpns || [];
+
+      const currentSavedRate = parseFloat(siteSettings.usdt_rate || 125);
       const pubCount = cachedProducts.filter(p => p.is_active).length;
       const unpubCount = cachedProducts.filter(p => !p.is_active).length;
 
@@ -680,7 +690,7 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 class="text-xl font-extrabold text-white">Pricing & Catalog Management</h2>
-              <p class="text-xs text-slate-400 mt-0.5">প্রোডাক্ট সিলেক্ট করে বাল্ক পাবলিশ/আন-পাবলিশ ও হোম স্লাইডারে ফিচার্ড করুন।</p>
+              <p class="text-xs text-slate-400 mt-0.5">প্রোডাক্টের দাম ও কুপন ডিসকাউন্ট স্ট্যাটাস ম্যানেজ করুন।</p>
             </div>
             
             <div class="flex flex-wrap items-center gap-3">
@@ -841,6 +851,14 @@
         const isSelected = selectedProductIds.has(p.id);
         const isFeatured = p.is_featured === true;
 
+        // চেক: এই প্রোডাক্টটিতে কি কোনো সক্রিয় কুপন সংযুক্ত রয়েছে?
+        const hasCoupon = cachedCoupons.some(c => 
+          c.is_active && 
+          c.applicable_product_ids && 
+          Array.isArray(c.applicable_product_ids) && 
+          c.applicable_product_ids.includes(p.id)
+        );
+
         return `
           <tr class="hover:bg-slate-800/40 transition-colors ${isSelected ? 'bg-indigo-950/25' : ''}">
             <td class="p-4 text-center">
@@ -858,7 +876,17 @@
                 </div>
 
                 <div>
-                  <div class="font-bold text-white text-xs">${p.name}</div>
+                  <div class="font-bold text-white text-xs flex items-center gap-1.5">
+                    <span>${p.name}</span>
+                    
+                    <!-- RED CIRCLE % BADGE FOR PRODUCTS WITH LINKED COUPON -->
+                    ${hasCoupon ? `
+                      <span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-rose-600 text-white font-black text-[9px] shadow-md shadow-rose-600/40 shrink-0" title="Active Coupon Discount Attached">
+                        %
+                      </span>
+                    ` : ''}
+                  </div>
+
                   <div class="text-[10px] text-slate-500 font-mono mt-0.5 flex items-center gap-2">
                     <span>ID: ${p.supplier_product_id}</span>
                     <button onclick="openImageManager('${p.id}')" class="text-indigo-400 hover:underline font-semibold flex items-center gap-0.5">
@@ -893,7 +921,6 @@
               </button>
             </td>
 
-            <!-- ONE-CLICK FEATURED SWITCHER -->
             <td class="p-4">
               <button data-id="${p.id}" data-featured="${isFeatured}" class="btn-toggle-featured px-2.5 py-1 rounded-full text-[10px] font-bold border transition-all flex items-center gap-1.5 ${
                 isFeatured
@@ -1405,7 +1432,7 @@
     }
 
     // =========================================================================
-    // 5. ORDERS & DELIVERY LOGS (WITH QUANTITY & PRODUCT DETAILS)
+    // 5. ORDERS & DELIVERY LOGS
     // =========================================================================
     async function renderOrders() {
       const main = document.getElementById('admin-main');
@@ -1508,14 +1535,25 @@
     }
 
     // =========================================================================
-    // 6. CAMPAIGNS, COUPON LIMITS & PROMOS TAB (INTERACTION LINK INTEGRATED)
+    // 6. CAMPAIGNS, MULTI-PRODUCT SEARCH & COUPONS TAB
     // =========================================================================
     async function renderPromosTab() {
       const main = document.getElementById('admin-main');
-      main.innerHTML = `<div class="text-xs text-slate-400 animate-pulse">Loading campaigns and coupons...</div>`;
+      main.innerHTML = `<div class="text-xs text-slate-400 animate-pulse">Loading campaigns, products, and coupons...</div>`;
 
+      // ক্যাটালগ প্রোডাক্ট লোড
+      if (!cachedProducts || cachedProducts.length === 0) {
+        const { data: prods } = await supabase.from('products').select('id, name, selling_price').order('name');
+        cachedProducts = prods || [];
+      }
+
+      // কুপন তালিকা লোড
       const { data: coupons } = await supabase.from('coupons').select('*').order('created_at', { ascending: false });
       cachedCoupons = coupons || [];
+
+      // স্টেট রিসেট
+      selectedCouponProductIds.clear();
+      isAllProductsMode = true;
 
       const popup = popupBannerConfig;
       const flash = flashSaleConfig;
@@ -1524,10 +1562,10 @@
         <div class="max-w-4xl space-y-6 animate-in fade-in duration-200">
           <div>
             <h2 class="text-xl font-extrabold text-white">Campaigns, Coupons & Promotional Banners</h2>
-            <p class="text-xs text-slate-400 mt-0.5">কুপন তৈরি ও ব্যবহারের সর্বোচ্চ লিমিট এবং অ্যাপ ব্যানার পরিচালনা করুন।</p>
+            <p class="text-xs text-slate-400 mt-0.5">একাধিক প্রোডাক্টে সার্চ দিয়ে কুপন কোড নির্ধারণ করুন ও ব্যানার পরিচালনা করুন।</p>
           </div>
 
-          <!-- SECTION 1: COUPON CODES & USER USAGE LIMITS -->
+          <!-- SECTION 1: COUPON CODES & MULTI-PRODUCT SEARCHABLE PICKER -->
           <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-5 shadow-sm">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
               <div class="flex items-center gap-2.5">
@@ -1535,15 +1573,15 @@
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4zM15 7a2 2 0 114 0 2 2 0 01-4 0z"/></svg>
                 </div>
                 <div>
-                  <h3 class="text-sm font-bold text-white">Coupon Code & User Limit Manager</h3>
-                  <p class="text-[11px] text-slate-400">কুপন কোড ও সর্বোচ্চ কতজন ব্যবহার করতে পারবে তার সীমা নির্ধারণ করুন</p>
+                  <h3 class="text-sm font-bold text-white">Coupon Code & Multi-Product Manager</h3>
+                  <p class="text-[11px] text-slate-400">একের অধিক নির্দিষ্ট প্রোডাক্ট সার্চ করে কুপনের আওতাভুক্ত করুন</p>
                 </div>
               </div>
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-mono">${cachedCoupons.length} Coupons</span>
             </div>
 
             <!-- CREATE NEW COUPON FORM -->
-            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3.5 text-xs">
               <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>নতুন কুপন কোড তৈরি করুন</span>
@@ -1552,7 +1590,7 @@
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">কুপন কোড (Coupon Code) *</label>
-                  <input type="text" id="new-coupon-code" placeholder="e.g. OCTOPUS50" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold uppercase outline-none focus:border-indigo-500 mt-1" />
+                  <input type="text" id="new-coupon-code" placeholder="e.g. MEGA50" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold uppercase outline-none focus:border-indigo-500 mt-1" />
                 </div>
                 <div>
                   <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">ডিসকাউন্টের ধরন</label>
@@ -1567,11 +1605,56 @@
                 </div>
               </div>
 
+              <!-- MULTI-PRODUCT SEARCH & SELECTION COMPONENT -->
+              <div class="p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl space-y-2.5">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] text-purple-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    <span>কুপন প্রয়োগের পরিধি (Product Scope)</span>
+                  </span>
+
+                  <!-- ALL PRODUCTS VS SPECIFIC TOGGLE -->
+                  <label class="inline-flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="chk-all-products-mode" class="rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-0 w-4 h-4 cursor-pointer" checked />
+                    <span class="text-xs font-bold text-white">সকল প্রোডাক্টে প্রযোজ্য (All Products)</span>
+                  </label>
+                </div>
+
+                <!-- SPECIFIC SEARCHABLE MULTI-SELECT PICKER (Hidden if all products is checked) -->
+                <div id="specific-products-box" class="space-y-2 pt-1 hidden">
+                  <!-- Real-time search filter input -->
+                  <div class="relative">
+                    <input type="text" id="coupon-search-input" placeholder="সার্চ করে প্রোডাক্ট খুঁজুন ও টিক দিন..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3.5 py-2 text-xs text-white outline-none focus:border-purple-500" />
+                    <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-500">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                  </div>
+
+                  <!-- SELECTED PRODUCTS BADGES / CHIPS CONTAINER -->
+                  <div id="selected-chips-container" class="flex flex-wrap gap-1.5 min-h-[28px] p-2 bg-slate-950/80 rounded-xl border border-slate-800/80">
+                    <span class="text-[10px] text-slate-500 italic">কোনো প্রোডাক্ট সিলেক্ট করা নেই (নিচে টিক দিন)</span>
+                  </div>
+
+                  <!-- SCROLLABLE CHECKLIST OF PRODUCTS -->
+                  <div id="product-checklist-container" class="max-h-48 overflow-y-auto space-y-1 bg-slate-950 p-2 rounded-xl border border-slate-800 divide-y divide-slate-900">
+                    ${cachedProducts.map(p => `
+                      <label data-name="${p.name.toLowerCase()}" class="product-check-row flex items-center justify-between p-2 rounded-lg hover:bg-slate-900/80 cursor-pointer transition-colors">
+                        <div class="flex items-center gap-2.5 overflow-hidden">
+                          <input type="checkbox" data-id="${p.id}" class="chk-coupon-prod rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-0 w-4 h-4" />
+                          <span class="text-xs font-medium text-white truncate max-w-[260px] sm:max-w-md">${p.name}</span>
+                        </div>
+                        <span class="text-[11px] font-mono text-emerald-400 font-bold shrink-0">৳${p.selling_price}</span>
+                      </label>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label class="text-[10px] text-amber-400 font-bold uppercase tracking-wider">ব্যবহারের সর্বোচ্চ সীমা (Usage Limit) *</label>
-                  <input type="number" step="1" id="new-coupon-limit" placeholder="কতজন ব্যবহার করতে পারবে e.g. 50" value="50" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold outline-none focus:border-amber-500 mt-1" />
-                  <span class="text-[9px] text-slate-500 mt-0.5 block">এই সংখ্যক ইউজার ব্যবহারের পর স্বয়ংক্রিয়ভাবে কুপন বন্ধ হয়ে যাবে</span>
+                  <input type="number" step="1" id="new-coupon-limit" placeholder="50" value="50" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono font-bold outline-none focus:border-amber-500 mt-1" />
+                  <span class="text-[9px] text-slate-500 mt-0.5 block">সর্বোচ্চ কতবার এই কুপনটি ব্যবহার করা যাবে</span>
                 </div>
                 <div>
                   <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">সর্বনিম্ন কেনাকাটা (Min Spend)</label>
@@ -1596,7 +1679,7 @@
             </div>
           </div>
 
-          <!-- SECTION 2: TOP ADS BANNER & LIVE COUNTDOWN TIMER (NO OUTWARD LINK) -->
+          <!-- SECTION 2: TOP ADS BANNER (NO OUTWARD LINK) -->
           <div class="bg-slate-900/90 border border-slate-800 p-6 rounded-3xl space-y-5 shadow-sm">
             <div class="flex items-center justify-between pb-3 border-b border-slate-800">
               <div class="flex items-center gap-2.5">
@@ -1674,7 +1757,7 @@
               <div id="popup-slides-list" class="space-y-2.5"></div>
             </div>
 
-            <!-- ADD POSTER FORM (BUTTON LINK RESTORED) -->
+            <!-- ADD POSTER FORM -->
             <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 text-xs">
               <span class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -1701,7 +1784,6 @@
                 </div>
               </div>
 
-              <!-- INTERACTION BUTTON & TARGET LINK RESTORED -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="text-[10px] text-slate-400 font-bold uppercase">বাটন টেক্সট (Button Text)</label>
@@ -1730,13 +1812,87 @@
       renderCouponsList();
       renderPopupSlidesList();
 
+      // "সকল প্রোডাক্ট" চেকবক্স টগল হ্যান্ডলার
+      const allChk = document.getElementById('chk-all-products-mode');
+      const specificBox = document.getElementById('specific-products-box');
+
+      allChk?.addEventListener('change', (e) => {
+        isAllProductsMode = e.target.checked;
+        if (isAllProductsMode) {
+          specificBox?.classList.add('hidden');
+          selectedCouponProductIds.clear();
+          updateSelectedChips();
+          document.querySelectorAll('.chk-coupon-prod').forEach(c => c.checked = false);
+        } else {
+          specificBox?.classList.remove('hidden');
+        }
+      });
+
+      // প্রোডাক্ট সার্চ ফিল্টার
+      document.getElementById('coupon-search-input')?.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        document.querySelectorAll('.product-check-row').forEach(row => {
+          const name = row.dataset.name || '';
+          row.classList.toggle('hidden', query && !name.includes(query));
+        });
+      });
+
+      // প্রোডাক্ট চেকবক্স ক্লিক
+      document.querySelectorAll('.chk-coupon-prod').forEach(chk => {
+        chk.addEventListener('change', () => {
+          const id = chk.dataset.id;
+          if (chk.checked) selectedCouponProductIds.add(id);
+          else selectedCouponProductIds.delete(id);
+          updateSelectedChips();
+        });
+      });
+
       document.getElementById('btn-create-coupon')?.addEventListener('click', handleCreateNewCoupon);
       document.getElementById('btn-add-slide-to-list')?.addEventListener('click', handleAddNewSlide);
       document.getElementById('btn-save-popup-config')?.addEventListener('click', handleSavePopupConfig);
       document.getElementById('btn-save-flash-config')?.addEventListener('click', handleSaveFlashConfig);
     }
 
-    // COUPONS LIST RENDERER
+    // সিলেক্টেড চিপস রেন্ডারার
+    function updateSelectedChips() {
+      const container = document.getElementById('selected-chips-container');
+      if (!container) return;
+
+      if (selectedCouponProductIds.size === 0) {
+        container.innerHTML = `<span class="text-[10px] text-slate-500 italic">কোনো প্রোডাক্ট সিলেক্ট করা নেই (নিচে টিক দিন)</span>`;
+        return;
+      }
+
+      const chipsHtml = Array.from(selectedCouponProductIds).map(id => {
+        const p = cachedProducts.find(x => x.id === id);
+        return `
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-purple-950/80 text-purple-300 border border-purple-800/60 shadow-sm">
+            <span class="truncate max-w-[140px]">${p ? p.name : 'Product'}</span>
+            <button type="button" data-id="${id}" class="btn-remove-chip text-purple-400 hover:text-white font-black ml-0.5">✕</button>
+          </span>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="flex items-center gap-2 w-full pb-1 border-b border-slate-900">
+          <span class="text-[10px] font-mono font-bold text-emerald-400">${selectedCouponProductIds.size} টি প্রোডাক্ট নির্বাচিত</span>
+        </div>
+        ${chipsHtml}
+      `;
+
+      container.querySelectorAll('.btn-remove-chip').forEach(b => {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const id = b.dataset.id;
+          selectedCouponProductIds.delete(id);
+          const chk = document.querySelector(`.chk-coupon-prod[data-id="${id}"]`);
+          if (chk) chk.checked = false;
+          updateSelectedChips();
+        });
+      });
+    }
+
+    // COUPONS LIST RENDERER (DISPLAYS PRODUCT TARGET BADGES)
     function renderCouponsList() {
       const container = document.getElementById('coupons-table-container');
       if (!container) return;
@@ -1753,12 +1909,26 @@
         const isExpired = c.expires_at && new Date(c.expires_at) < new Date();
         const isLimitReached = used >= limit;
 
+        // চেক কতগুলো প্রোডাক্টে কুপনটি প্রযোজ্য
+        const pIds = c.applicable_product_ids || (c.applicable_product_id ? [c.applicable_product_id] : null);
+        let scopeBadge = `<span class="text-[10px] font-bold text-slate-400 bg-slate-900 px-2 py-0.5 rounded-md border border-slate-800">সকল প্রোডাক্ট (All)</span>`;
+
+        if (pIds && Array.isArray(pIds) && pIds.length > 0) {
+          if (pIds.length === 1) {
+            const single = cachedProducts.find(p => p.id === pIds[0]);
+            scopeBadge = `<span class="text-[10px] font-bold text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded-md border border-purple-800/50 truncate max-w-[200px]" title="${single ? single.name : ''}">১টি প্রোডাক্ট: ${single ? single.name : 'Item'}</span>`;
+          } else {
+            scopeBadge = `<span class="text-[10px] font-bold text-purple-400 bg-purple-950/60 px-2 py-0.5 rounded-md border border-purple-800/50">${pIds.length} টি প্রোডাক্টে প্রযোজ্য</span>`;
+          }
+        }
+
         return `
           <div class="bg-slate-950 border border-slate-800/90 rounded-2xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="space-y-1">
-              <div class="flex items-center gap-2">
+              <div class="flex flex-wrap items-center gap-2">
                 <span class="font-mono font-black text-sm text-indigo-400 bg-indigo-950/60 px-2.5 py-0.5 rounded-lg border border-indigo-800/40">${c.code}</span>
                 <span class="text-xs font-bold text-emerald-400">${c.discount_type === 'PERCENT' ? `${c.discount_value}% OFF` : `৳${c.discount_value} OFF`}</span>
+                ${scopeBadge}
                 ${c.min_spend > 0 ? `<span class="text-[10px] text-slate-500 font-mono">(Min ৳${c.min_spend})</span>` : ''}
               </div>
 
@@ -1841,6 +2011,14 @@
         return notify("ভুল ইনপুট", "কুপন কোড, ডিসকাউন্টের মান এবং ব্যবহারের সীমা পূরণ করুন", "error");
       }
 
+      // যদি All Products মোড না থাকে এবং নির্দিষ্ট সিলেক্ট করা থাকে
+      let applicableArray = null;
+      if (!isAllProductsMode && selectedCouponProductIds.size > 0) {
+        applicableArray = Array.from(selectedCouponProductIds);
+      } else if (!isAllProductsMode && selectedCouponProductIds.size === 0) {
+        return notify("প্রোডাক্ট বাছাই করুন", "অন্তত একটি প্রোডাক্ট নির্বাচন করুন অথবা 'সকল প্রোডাক্ট' টিক দিন", "error");
+      }
+
       isCreatingCoupon = true;
       const btn = document.getElementById('btn-create-coupon');
       const spinner = document.getElementById('create-coupon-spinner');
@@ -1855,6 +2033,7 @@
           code,
           discount_type: type,
           discount_value: val,
+          applicable_product_ids: applicableArray,
           min_spend: minSpend,
           usage_limit: limit,
           used_count: 0,
@@ -1864,7 +2043,7 @@
 
         if (error) throw error;
 
-        notify("কুপন সফল!", `কুপন "${code}" তৈরি হয়েছে। সর্বোচ্চ ${limit} জন ব্যবহার করতে পারবে।`, "success");
+        notify("কুপন সফল!", `কুপন "${code}" তৈরি হয়েছে। ${applicableArray ? `${applicableArray.length}টি প্রোডাক্টে` : 'সকল প্রোডাক্টে'} চলবে।`, "success");
         renderPromosTab();
       } catch (err) {
         notify("ব্যর্থ", err.message, "error");
